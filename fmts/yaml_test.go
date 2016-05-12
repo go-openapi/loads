@@ -151,6 +151,140 @@ var yamlPestoreServer = func(rw http.ResponseWriter, r *http.Request) {
 	rw.Write([]byte(yamlPetStore))
 }
 
+func TestWithYKey(t *testing.T) {
+	doc, err := bytesToYAMLDoc([]byte(withYKey))
+	if assert.NoError(t, err) {
+		_, err := YAMLToJSON(doc)
+		if assert.Error(t, err) {
+			doc, err := bytesToYAMLDoc([]byte(withQuotedYKey))
+			if assert.NoError(t, err) {
+				jsond, err := YAMLToJSON(doc)
+				if assert.NoError(t, err) {
+					var yt struct {
+						Definitions struct {
+							Viewbox struct {
+								Properties struct {
+									Y struct {
+										Type string `json:"type"`
+									} `json:"y"`
+								} `json:"properties"`
+							} `json:"viewbox"`
+						} `json:"definitions"`
+					}
+					if assert.NoError(t, json.Unmarshal(jsond, &yt)) {
+						assert.Equal(t, "integer", yt.Definitions.Viewbox.Properties.Y.Type)
+					}
+				}
+			}
+		}
+
+	}
+}
+
+const withQuotedYKey = `consumes:
+- application/json
+definitions:
+  viewBox:
+    type: object
+    properties:
+      x:
+        type: integer
+        format: int16
+      # y -> types don't match: expect map key string or int get: bool
+      "y":
+        type: integer
+        format: int16
+      width:
+        type: integer
+        format: int16
+      height:
+        type: integer
+        format: int16
+info:
+  description: Test RESTful APIs
+  title: Test Server
+  version: 1.0.0
+basePath: /api
+paths:
+  /test:
+    get:
+      operationId: findAll
+      parameters:
+        - name: since
+          in: query
+          type: integer
+          format: int64
+        - name: limit
+          in: query
+          type: integer
+          format: int32
+          default: 20
+      responses:
+        200:
+          description: Array[Trigger]
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/viewBox"
+produces:
+- application/json
+schemes:
+- https
+swagger: "2.0"
+`
+
+const withYKey = `consumes:
+- application/json
+definitions:
+  viewBox:
+    type: object
+    properties:
+      x:
+        type: integer
+        format: int16
+      # y -> types don't match: expect map key string or int get: bool
+      y:
+        type: integer
+        format: int16
+      width:
+        type: integer
+        format: int16
+      height:
+        type: integer
+        format: int16
+info:
+  description: Test RESTful APIs
+  title: Test Server
+  version: 1.0.0
+basePath: /api
+paths:
+  /test:
+    get:
+      operationId: findAll
+      parameters:
+        - name: since
+          in: query
+          type: integer
+          format: int64
+        - name: limit
+          in: query
+          type: integer
+          format: int32
+          default: 20
+      responses:
+        200:
+          description: Array[Trigger]
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/viewBox"
+produces:
+- application/json
+schemes:
+- https
+swagger: "2.0"
+`
+
 const yamlPetStore = `swagger: '2.0'
 info:
   version: '1.0.0'
