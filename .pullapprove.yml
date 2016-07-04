@@ -5,6 +5,7 @@ reset_on_push: false
 reviewers:
   members:
   - casualjim
+  - chancez
   - frapposelli
   - vburenin
   - pytlesk4
