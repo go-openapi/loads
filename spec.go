@@ -134,12 +134,12 @@ func Analyzed(data json.RawMessage, version string) (*Document, error) {
 }
 
 // Expanded expands the ref fields in the spec document and returns a new spec document
-func (d *Document) Expanded() (*Document, error) {
+func (d *Document) Expanded(options *spec.ExpandOptions) (*Document, error) {
 	swspec := new(spec.Swagger)
 	if err := json.Unmarshal(d.raw, swspec); err != nil {
 		return nil, err
 	}
-	if err := spec.ExpandSpec(swspec); err != nil {
+	if err := spec.ExpandSpec(swspec, options); err != nil {
 		return nil, err
 	}
 
