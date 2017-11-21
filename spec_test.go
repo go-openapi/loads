@@ -655,7 +655,8 @@ const expectedExpanded = `
 `
 
 const cascadeRefExpanded = `
-{  
+{ 
+  "swagger": "2.0",
   "consumes":[  
      "application/json"
   ],
