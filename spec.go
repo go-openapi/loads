@@ -90,6 +90,21 @@ type Document struct {
 	raw          json.RawMessage
 }
 
+// Embedded returns a Document based on embedded specs. No analysis is required
+func Embedded(orig, flat json.RawMessage) (*Document, error) {
+	var origSpec, flatSpec spec.Swagger
+	if err := json.Unmarshal(orig, &origSpec); err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(flat, &flatSpec); err != nil {
+		return nil, err
+	}
+	return &Document{
+		origSpec: &origSpec,
+		spec:     &flatSpec,
+	}, nil
+}
+
 // Spec loads a new spec document
 func Spec(path string) (*Document, error) {
 	specURL, err := url.Parse(path)
