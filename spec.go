@@ -100,6 +100,7 @@ func Embedded(orig, flat json.RawMessage) (*Document, error) {
 		return nil, err
 	}
 	return &Document{
+		raw:      orig,
 		origSpec: &origSpec,
 		spec:     &flatSpec,
 	}, nil
