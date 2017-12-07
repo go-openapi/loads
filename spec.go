@@ -212,11 +212,12 @@ func (d *Document) Expanded(options ...*spec.ExpandOptions) (*Document, error) {
 	}
 
 	dd := &Document{
-		Analyzer: analysis.New(swspec),
-		spec:     swspec,
-		schema:   spec.MustLoadSwagger20Schema(),
-		raw:      d.raw,
-		origSpec: d.origSpec,
+		Analyzer:     analysis.New(swspec),
+		spec:         swspec,
+		specFilePath: d.specFilePath,
+		schema:       spec.MustLoadSwagger20Schema(),
+		raw:          d.raw,
+		origSpec:     d.origSpec,
 	}
 	return dd, nil
 }
