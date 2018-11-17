@@ -77,7 +77,7 @@ func JSONSpec(path string) (*Document, error) {
 		return nil, err
 	}
 	// convert to json
-	return Analyzed(json.RawMessage(data), "")
+	return Analyzed(data, "")
 }
 
 // Document represents a swagger spec document
@@ -121,9 +121,9 @@ func Spec(path string) (*Document, error) {
 				lastErr = err2
 				continue
 			}
-			doc, err := Analyzed(b, "")
-			if err != nil {
-				return nil, err
+			doc, err3 := Analyzed(b, "")
+			if err3 != nil {
+				return nil, err3
 			}
 			if doc != nil {
 				doc.specFilePath = path
@@ -253,6 +253,7 @@ func (d *Document) Raw() json.RawMessage {
 	return d.raw
 }
 
+// OrigSpec yields the original spec
 func (d *Document) OrigSpec() *spec.Swagger {
 	return d.origSpec
 }
