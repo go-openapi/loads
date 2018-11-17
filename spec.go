@@ -51,6 +51,9 @@ func init() {
 	loaders = defaultLoader
 	spec.PathLoader = loaders.Fn
 	AddLoader(swag.YAMLMatcher, swag.YAMLDoc)
+
+	gob.Register(map[string]interface{}{})
+	gob.Register([]interface{}{})
 }
 
 // AddLoader for a document
