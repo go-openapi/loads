@@ -1,0 +1,50 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "PartSearch Api",
+        "description": "Search for Parts",
+        "version": "v3"
+    },
+    "host": "api.example.com",
+    "paths": {
+        "\/Products\/Keyword": {
+            "post": {
+                "consumes": [
+                    "application\/json"
+                ],
+                "produces": [
+                    "application\/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "KeywordSearchRequest",
+                        "schema": {
+				"$ref" : "#/definitions/KeywordSearchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+				"description":"bla",
+				"type": "string"
+                        }
+                    }
+                }
+            }
+	}
+    },
+    "definitions": {
+        "KeywordSearchRequest": {
+            "description": "Keyword Search Request object",
+            "type": "string"
+        },
+        "KeywordSearchResponse": {
+            "description": "Response model for a keyword search request.",
+            "type": "string"
+        }
+    }
+}
