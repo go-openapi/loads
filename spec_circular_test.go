@@ -1,11 +1,12 @@
 package loads_test
 
 import (
+	"testing"
+
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestPathLoaderIssue(t *testing.T) {
