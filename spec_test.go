@@ -90,7 +90,6 @@ func TestIssue1846(t *testing.T) {
 	sp, err := cloneSpec(document.Spec())
 	assert.NoError(t, err)
 	jazon, _ := json.MarshalIndent(sp, "", " ")
-	//t.Logf("%s", string(jazon))
 	rex := regexp.MustCompile(`"\$ref":\s*"(.+)"`)
 	m := rex.FindAllStringSubmatch(string(jazon), -1)
 	if assert.NotNil(t, m) {

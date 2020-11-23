@@ -53,7 +53,7 @@ func init() {
 
 	gob.Register(map[string]interface{}{})
 	gob.Register([]interface{}{})
-	//gob.Register(spec.Refable{})
+	// gob.Register(spec.Refable{})
 }
 
 // AddLoader for a document

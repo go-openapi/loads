@@ -27,6 +27,7 @@ import (
 
 var extensions = []string{"json"}
 
+// nolint:unparam
 func assertSpecJSON(t testing.TB, specJSON []byte) bool {
 	var expected map[string]interface{}
 	if !assert.NoError(t, json.Unmarshal(specJSON, &expected)) {
@@ -73,6 +74,7 @@ func assertSpecMaps(t testing.TB, actual, expected map[string]interface{}) bool 
 	return res
 }
 
+// nolint:unparam
 func roundTripTest(t *testing.T, fixtureType, extension, fileName string, schema interface{}) bool {
 	if extension == "yaml" {
 		return roundTripTestYAML(t, fixtureType, fileName, schema)
@@ -194,7 +196,6 @@ FILES:
 				continue FILES
 			}
 		}
-		//fmt.Println("trying", f.Name())
 		roundTripTest(t, "model", "json", filepath.Join(path, f.Name()), &spec.Schema{})
 	}
 	path = filepath.Join("..", "fixtures", "yaml", "models")
@@ -213,7 +214,6 @@ YAMLFILES:
 				continue YAMLFILES
 			}
 		}
-		// fmt.Println("trying", f.Name())
 		roundTripTest(t, "model", "yaml", filepath.Join(path, f.Name()), &spec.Schema{})
 	}
 }
