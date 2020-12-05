@@ -5,10 +5,10 @@ info:
   description: recursively following JSON references
   contact:
     name: Fred
+host: api.example.com
 
 schemes:
   - http
-
 consumes:
   - application/json
 produces:

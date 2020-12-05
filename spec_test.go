@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUnknownSpecVersion(t *testing.T) {
@@ -31,9 +32,9 @@ func TestUnknownSpecVersion(t *testing.T) {
 
 func TestDefaultsTo20(t *testing.T) {
 	d, err := Analyzed(PetStoreJSONMessage, "")
+	require.NoError(t, err)
+	require.NotNil(t, d)
 
-	assert.NoError(t, err)
-	assert.NotNil(t, d)
 	assert.Equal(t, "2.0", d.Version())
 	// assert.Equal(t, "2.0", d.data["swagger"].(string))
 	assert.Equal(t, "/api", d.BasePath())
@@ -41,23 +42,24 @@ func TestDefaultsTo20(t *testing.T) {
 
 func TestLoadsYAMLContent(t *testing.T) {
 	d, err := Analyzed(json.RawMessage([]byte(YAMLSpec)), "")
-	if assert.NoError(t, err) {
-		if assert.NotNil(t, d) {
-			sw := d.Spec()
-			assert.Equal(t, "1.0.0", sw.Info.Version)
-		}
-	}
+	require.NoError(t, err)
+	require.NotNil(t, d)
+
+	sw := d.Spec()
+	assert.Equal(t, "1.0.0", sw.Info.Version)
 }
 
 // for issue 11
 func TestRegressionExpand(t *testing.T) {
 	swaggerFile := "fixtures/yaml/swagger/1/2/3/4/swagger.yaml"
 	document, err := Spec(swaggerFile)
-	assert.NoError(t, err)
-	assert.NotNil(t, document)
+	require.NoError(t, err)
+	require.NotNil(t, document)
+
 	d, err := document.Expanded()
-	assert.NoError(t, err)
-	assert.NotNil(t, d)
+	require.NoError(t, err)
+	require.NotNil(t, d)
+
 	b, _ := d.Spec().MarshalJSON()
 	assert.JSONEq(t, expectedExpanded, string(b))
 }
@@ -65,11 +67,13 @@ func TestRegressionExpand(t *testing.T) {
 func TestCascadingRefExpand(t *testing.T) {
 	swaggerFile := "fixtures/yaml/swagger/spec.yml"
 	document, err := Spec(swaggerFile)
-	assert.NoError(t, err)
-	assert.NotNil(t, document)
+	require.NoError(t, err)
+	require.NotNil(t, document)
+
 	d, err := document.Expanded()
-	assert.NoError(t, err)
-	assert.NotNil(t, d)
+	require.NoError(t, err)
+	require.NotNil(t, d)
+
 	b, _ := d.Spec().MarshalJSON()
 	assert.JSONEq(t, cascadeRefExpanded, string(b))
 }
@@ -84,23 +88,79 @@ func TestFailsInvalidJSON(t *testing.T) {
 func TestIssue1846(t *testing.T) {
 	swaggerFile := "fixtures/bugs/1816/fixture-1816.yaml"
 	document, err := Spec(swaggerFile)
-	assert.NoError(t, err)
-	assert.NotNil(t, document)
+	require.NoError(t, err)
+	require.NotNil(t, document)
 
 	sp, err := cloneSpec(document.Spec())
-	assert.NoError(t, err)
+	require.NoError(t, err)
+
 	jazon, _ := json.MarshalIndent(sp, "", " ")
 	rex := regexp.MustCompile(`"\$ref":\s*"(.+)"`)
 	m := rex.FindAllStringSubmatch(string(jazon), -1)
-	if assert.NotNil(t, m) {
-		for _, matched := range m {
-			subMatch := matched[1]
-			if !assert.True(t, strings.HasPrefix(subMatch, "#/definitions") || strings.HasPrefix(subMatch, "#/responses"),
-				"expected $ref to point either to definitions or responses section, got: %s", matched[0]) {
-				t.FailNow()
-			}
-		}
+	require.NotNil(t, m)
+
+	for _, matched := range m {
+		subMatch := matched[1]
+		require.Truef(t,
+			strings.HasPrefix(subMatch, "#/definitions") || strings.HasPrefix(subMatch, "#/responses"),
+			"expected $ref to point either to definitions or responses section, got: %s", matched[0])
 	}
+}
+
+func TestEmbedded(t *testing.T) {
+	swaggerFile := "fixtures/yaml/swagger/spec.yml"
+	document, err := Spec(swaggerFile)
+	require.NoError(t, err)
+	require.NotNil(t, document)
+
+	raw, err := json.Marshal(document.Raw())
+	require.NoError(t, err)
+
+	spc, err := json.Marshal(document.Spec())
+	require.NoError(t, err)
+
+	d, err := Embedded(raw, spc)
+	require.NoError(t, err)
+	require.NotNil(t, d)
+
+	rawEmbedded, err := json.Marshal(d.Raw())
+	require.NoError(t, err)
+
+	spcEmbedded, err := json.Marshal(d.Spec())
+	require.NoError(t, err)
+
+	assert.JSONEq(t, string(raw), string(rawEmbedded))
+	assert.JSONEq(t, string(spc), string(spcEmbedded))
+}
+
+func TestDocument(t *testing.T) {
+	document, err := Embedded(PetStoreJSONMessage, PetStoreJSONMessage)
+	require.NoError(t, err)
+
+	require.Equal(t, "petstore.swagger.wordnik.com", document.Host())
+
+	orig, err := json.Marshal(document.OrigSpec())
+	require.NoError(t, err)
+
+	require.JSONEq(t, string(PetStoreJSONMessage), string(orig))
+
+	cloned, err := json.Marshal(document.Pristine().Spec())
+	require.NoError(t, err)
+
+	require.JSONEq(t, string(PetStoreJSONMessage), string(cloned))
+
+	spc := document.Spec()
+	spc.Definitions = nil
+
+	before := document.Spec()
+	require.Len(t, before.Definitions, 0)
+
+	reset := document.ResetDefinitions()
+
+	afterReset, err := json.Marshal(reset.Spec())
+	require.NoError(t, err)
+
+	require.JSONEq(t, string(PetStoreJSONMessage), string(afterReset))
 }
 
 func BenchmarkAnalyzed(b *testing.B) {
@@ -1055,3 +1115,10 @@ const cascadeRefExpanded = `
   }
 }
 `
+
+func TestSpecCircular(t *testing.T) {
+	swaggerFile := "fixtures/json/resources/pathLoaderIssue.json"
+	document, err := Spec(swaggerFile)
+	require.NoError(t, err)
+	require.NotNil(t, document)
+}
