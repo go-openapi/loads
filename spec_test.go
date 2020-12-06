@@ -1066,6 +1066,7 @@ const cascadeRefExpanded = `
   "schemes":[
      "http"
   ],
+	"host": "api.example.com",
   "info":{
      "description":"recursively following JSON references",
      "title":"test 1",
