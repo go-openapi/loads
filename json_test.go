@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestLoadJSON(t *testing.T) {
@@ -27,8 +28,8 @@ func TestLoadJSON(t *testing.T) {
 	defer serv.Close()
 
 	s, err := JSONSpec(serv.URL)
-	assert.NoError(t, err)
-	assert.NotNil(t, s)
+	require.NoError(t, err)
+	require.NotNil(t, s)
 
 	ts2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		rw.WriteHeader(http.StatusNotFound)
