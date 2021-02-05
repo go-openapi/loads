@@ -8,7 +8,7 @@ require (
 	github.com/go-openapi/validate v0.20.1
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/stretchr/testify v1.6.1
-	go.mongodb.org/mongo-driver v1.4.5 // indirect
+	go.mongodb.org/mongo-driver v1.4.6 // indirect
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
 	golang.org/x/text v0.3.5 // indirect
 	gopkg.in/yaml.v2 v2.4.0
