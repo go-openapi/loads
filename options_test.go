@@ -3,7 +3,7 @@ package loads
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -16,7 +16,7 @@ const optionFixture = "fixtures/json/resources/pathLoaderIssue.json"
 
 func TestOptionsWithDocLoader(t *testing.T) {
 	document, err := Spec(optionFixture, WithDocLoader(func(pth string) (json.RawMessage, error) {
-		buf, err := ioutil.ReadFile(pth)
+		buf, err := os.ReadFile(pth)
 		return json.RawMessage(buf), err
 	}))
 	require.NoError(t, err)
@@ -43,12 +43,12 @@ func TestOptionsLoaderFromOptions(t *testing.T) {
 	l := loaderFromOptions([]LoaderOption{
 		WithDocLoader(func(pth string) (json.RawMessage, error) {
 			called = 1
-			buf, err := ioutil.ReadFile(pth)
+			buf, err := os.ReadFile(pth)
 			return json.RawMessage(buf), err
 		}),
 		WithDocLoader(func(pth string) (json.RawMessage, error) {
 			called = 2
-			buf, err := ioutil.ReadFile(pth)
+			buf, err := os.ReadFile(pth)
 			return json.RawMessage(buf), err
 		}),
 	})
@@ -64,7 +64,7 @@ func TestOptionsLoaderFromOptions(t *testing.T) {
 func TestOptionsWithDocLoaderMatches(t *testing.T) {
 	jsonLoader := NewDocLoaderWithMatch(
 		func(pth string) (json.RawMessage, error) {
-			buf, err := ioutil.ReadFile(pth)
+			buf, err := os.ReadFile(pth)
 			return json.RawMessage(buf), err
 		},
 		func(pth string) bool {
