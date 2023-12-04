@@ -16,6 +16,7 @@ package loads
 
 import (
 	"encoding/json"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -1122,4 +1123,60 @@ func TestSpecCircular(t *testing.T) {
 	document, err := Spec(swaggerFile)
 	require.NoError(t, err)
 	require.NotNil(t, document)
+}
+
+func TestIssueSpec145(t *testing.T) {
+	t.Run("with remote $ref", func(t *testing.T) {
+		docPath := filepath.Join("fixtures", "bugs", "145", "Program Files (x86)", "AppName", "todos.json")
+
+		t.Run("with Spec loader", func(t *testing.T) {
+			document, err := Spec(docPath)
+			require.NoError(t, err)
+			require.NotNil(t, document)
+
+			_, err = document.Expanded()
+			require.NoError(t, err)
+		})
+
+		t.Run("with JSONSpec loader", func(t *testing.T) {
+			document, err := JSONSpec(docPath)
+			require.NoError(t, err)
+			require.NotNil(t, document)
+
+			_, err = document.Expanded()
+			require.NoError(t, err)
+		})
+	})
+
+	t.Run("with self-contained root", func(t *testing.T) {
+		docPath := filepath.Join("fixtures", "bugs", "145", "Program Files (x86)", "AppName", "todos-expanded.json")
+
+		t.Run("with Spec loader", func(t *testing.T) {
+			document, err := Spec(docPath)
+			require.NoError(t, err)
+			require.NotNil(t, document)
+
+			require.Equal(t, docPath, document.SpecFilePath())
+
+			expanded, err := document.Expanded()
+			require.NoError(t, err)
+
+			require.Equal(t, docPath, expanded.SpecFilePath())
+		})
+
+		t.Run("with JSONSpec loader", func(t *testing.T) {
+			document, err := JSONSpec(docPath)
+			require.NoError(t, err)
+			require.NotNil(t, document)
+
+			_, err = document.Expanded()
+			require.NoError(t, err)
+
+			t.Run("with Pristine", func(t *testing.T) {
+				pristine := document.Pristine()
+
+				require.Equal(t, document.SpecFilePath(), pristine.SpecFilePath())
+			})
+		})
+	})
 }
