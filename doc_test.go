@@ -3,7 +3,7 @@ package loads_test
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/go-openapi/loads"
@@ -25,7 +25,7 @@ func ExampleSpec() {
 	// Output: Spec loaded: "api.example.com"
 }
 
-func ExampleOption() {
+func ExampleLoaderOption() {
 	// Example with custom loaders passed as options
 
 	path := "fixtures/yaml/swagger/spec.yml"
@@ -33,7 +33,7 @@ func ExampleOption() {
 	// a simpler version of loads.JSONDoc
 	jsonLoader := loads.NewDocLoaderWithMatch(
 		func(pth string) (json.RawMessage, error) {
-			buf, err := ioutil.ReadFile(pth)
+			buf, err := os.ReadFile(pth)
 			return json.RawMessage(buf), err
 		},
 		func(pth string) bool {

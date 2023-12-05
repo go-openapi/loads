@@ -28,7 +28,7 @@ import (
 
 func TestUnknownSpecVersion(t *testing.T) {
 	_, err := Analyzed([]byte{}, "0.9")
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 func TestDefaultsTo20(t *testing.T) {
@@ -82,7 +82,7 @@ func TestCascadingRefExpand(t *testing.T) {
 func TestFailsInvalidJSON(t *testing.T) {
 	_, err := Analyzed(json.RawMessage([]byte("{]")), "")
 
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 // issue go-swagger/go-swagger#1816 (regression when cloning original spec)
@@ -154,7 +154,7 @@ func TestDocument(t *testing.T) {
 	spc.Definitions = nil
 
 	before := document.Spec()
-	require.Len(t, before.Definitions, 0)
+	require.Empty(t, before.Definitions)
 
 	reset := document.ResetDefinitions()
 

@@ -19,7 +19,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -37,7 +36,7 @@ func TestLoadJSON(t *testing.T) {
 	}))
 	defer ts2.Close()
 	_, err = JSONSpec(ts2.URL)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
 var jsonPestoreServer = func(rw http.ResponseWriter, r *http.Request) {

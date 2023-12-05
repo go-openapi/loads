@@ -21,10 +21,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 
 	"github.com/go-openapi/swag"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type failJSONMarshal struct {
@@ -36,15 +37,15 @@ func (f failJSONMarshal) MarshalJSON() ([]byte, error) {
 
 func TestLoadHTTPBytes(t *testing.T) {
 	_, err := swag.LoadFromFileOrHTTP("httx://12394:abd")
-	assert.Error(t, err)
+	require.Error(t, err)
 
-	serv := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	serv := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
 		rw.WriteHeader(http.StatusNotFound)
 	}))
 	defer serv.Close()
 
 	_, err = swag.LoadFromFileOrHTTP(serv.URL)
-	assert.Error(t, err)
+	require.Error(t, err)
 
 	ts2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		rw.WriteHeader(http.StatusOK)
@@ -53,77 +54,81 @@ func TestLoadHTTPBytes(t *testing.T) {
 	defer ts2.Close()
 
 	d, err := swag.LoadFromFileOrHTTP(ts2.URL)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, []byte("the content"), d)
 }
 
 func TestYAMLToJSON(t *testing.T) {
-
-	sd := `---
+	const sd = `---
 1: the int key value
 name: a string value
 'y': some value
 `
-	var data yaml.MapSlice
-	_ = yaml.Unmarshal([]byte(sd), &data)
+	t.Run("YAML object as JSON", func(t *testing.T) {
+		var data interface{}
+		require.NoError(t, yaml.Unmarshal([]byte(sd), &data))
 
-	d, err := YAMLToJSON(data)
-	if assert.NoError(t, err) {
-		assert.Equal(t, `{"1":"the int key value","name":"a string value","y":"some value"}`, string(d))
-	}
+		d, err := YAMLToJSON(data)
+		require.NoError(t, err)
+		assert.JSONEq(t,
+			`{"1":"the int key value","name":"a string value","y":"some value"}`,
+			string(d),
+		)
+	})
 
-	data = append(data, yaml.MapItem{Key: true, Value: "the bool value"})
-	d, err = YAMLToJSON(data)
-	assert.Error(t, err)
-	assert.Nil(t, d)
+	t.Run("YAML nodes as JSON", func(t *testing.T) {
+		var data yaml.Node
+		require.NoError(t, yaml.Unmarshal([]byte(sd), &data))
 
-	data = data[:len(data)-1]
+		data.Content[0].Content = append(data.Content[0].Content,
+			&yaml.Node{Kind: yaml.ScalarNode, Value: "tag", Tag: "!!str"},
+			&yaml.Node{
+				Kind: yaml.MappingNode,
+				Content: []*yaml.Node{
+					{Kind: yaml.ScalarNode, Value: "name", Tag: "!!str"},
+					{Kind: yaml.ScalarNode, Value: "tag name", Tag: "!!str"},
+				},
+			},
+		)
 
-	tag := yaml.MapSlice{{Key: "name", Value: "tag name"}}
-	data = append(data, yaml.MapItem{Key: "tag", Value: tag})
+		d, err := YAMLToJSON(data)
+		require.NoError(t, err)
+		assert.JSONEq(t,
+			`{"1":"the int key value","name":"a string value","y":"some value","tag":{"name":"tag name"}}`,
+			string(d),
+		)
+	})
 
-	d, err = YAMLToJSON(data)
-	assert.NoError(t, err)
-	assert.Equal(t, `{"1":"the int key value","name":"a string value","y":"some value","tag":{"name":"tag name"}}`,
-		string(d))
+	t.Run("YAML slice as JSON", func(t *testing.T) {
+		lst := []interface{}{"hello"}
+		d, err := YAMLToJSON(&lst)
+		require.NoError(t, err)
+		assert.JSONEq(t, `["hello"]`, string(d))
+	})
 
-	tag = yaml.MapSlice{{Key: true, Value: "bool tag name"}}
-	data = append(data[:len(data)-1], yaml.MapItem{Key: "tag", Value: tag})
+	t.Run("fail to convert to JSON", func(t *testing.T) {
+		t.Run("with invalid receiver", func(t *testing.T) {
+			_, err := YAMLToJSON(failJSONMarshal{})
+			require.Error(t, err)
+		})
 
-	d, err = YAMLToJSON(data)
-	assert.Error(t, err)
-	assert.Nil(t, d)
+		t.Run("with invalid document", func(t *testing.T) {
+			_, err := BytesToYAMLDoc([]byte("- name: hello\n"))
+			require.Error(t, err)
+		})
+	})
 
-	var lst []interface{}
-	lst = append(lst, "hello")
+	t.Run("with BytesToYamlDoc", func(t *testing.T) {
+		dd, err := BytesToYAMLDoc([]byte("description: 'object created'\n"))
+		require.NoError(t, err)
 
-	d, err = YAMLToJSON(lst)
-	assert.NoError(t, err)
-	assert.Equal(t, []byte(`["hello"]`), []byte(d))
-
-	lst = append(lst, data)
-
-	d, err = YAMLToJSON(lst)
-	assert.Error(t, err)
-	assert.Nil(t, d)
-
-	// test failure
-	_, err = YAMLToJSON(failJSONMarshal{})
-	assert.Error(t, err)
-
-	_, err = BytesToYAMLDoc([]byte("- name: hello\n"))
-	assert.Error(t, err)
-
-	dd, err := BytesToYAMLDoc([]byte("description: 'object created'\n"))
-	assert.NoError(t, err)
-
-	d, err = YAMLToJSON(dd)
-	assert.NoError(t, err)
-	assert.Equal(t, json.RawMessage(`{"description":"object created"}`), d)
+		d, err := YAMLToJSON(dd)
+		require.NoError(t, err)
+		assert.Equal(t, json.RawMessage(`{"description":"object created"}`), d)
+	})
 }
 
 func TestLoadStrategy(t *testing.T) {
-
 	loader := func(p string) ([]byte, error) {
 		return []byte(yamlPetStore), nil
 	}
@@ -139,51 +144,54 @@ func TestLoadStrategy(t *testing.T) {
 	defer serv.Close()
 
 	s, err := YAMLDoc(serv.URL)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.NotNil(t, s)
 
-	ts2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	ts2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
 		rw.WriteHeader(http.StatusNotFound)
 		_, _ = rw.Write([]byte("\n"))
 	}))
 	defer ts2.Close()
 	_, err = YAMLDoc(ts2.URL)
-	assert.Error(t, err)
+	require.Error(t, err)
 }
 
-var yamlPestoreServer = func(rw http.ResponseWriter, r *http.Request) {
+var yamlPestoreServer = func(rw http.ResponseWriter, _ *http.Request) {
 	rw.WriteHeader(http.StatusOK)
 	_, _ = rw.Write([]byte(yamlPetStore))
 }
 
 func TestWithYKey(t *testing.T) {
-	doc, err := BytesToYAMLDoc([]byte(withYKey))
-	if assert.NoError(t, err) {
-		_, err := YAMLToJSON(doc)
-		if assert.Error(t, err) {
-			doc, err := BytesToYAMLDoc([]byte(withQuotedYKey))
-			if assert.NoError(t, err) {
-				jsond, err := YAMLToJSON(doc)
-				if assert.NoError(t, err) {
-					var yt struct {
-						Definitions struct {
-							Viewbox struct {
-								Properties struct {
-									Y struct {
-										Type string `json:"type"`
-									} `json:"y"`
-								} `json:"properties"`
-							} `json:"viewbox"`
-						} `json:"definitions"`
-					}
-					if assert.NoError(t, json.Unmarshal(jsond, &yt)) {
-						assert.Equal(t, "integer", yt.Definitions.Viewbox.Properties.Y.Type)
-					}
-				}
-			}
-		}
+	t.Run("with YAMLv3, unquoted y as key is parsed correctly", func(t *testing.T) {
+		doc, err := BytesToYAMLDoc([]byte(withYKey))
+		require.NoError(t, err)
 
-	}
+		_, err = YAMLToJSON(doc)
+		require.NoError(t, err)
+	})
+
+	t.Run("quoted y as key is parsed correctly", func(t *testing.T) {
+		doc, err := BytesToYAMLDoc([]byte(withQuotedYKey))
+		require.NoError(t, err)
+
+		jsond, err := YAMLToJSON(doc)
+		require.NoError(t, err)
+
+		var yt struct {
+			Definitions struct {
+				Viewbox struct {
+					Properties struct {
+						Y struct {
+							Type string `json:"type"`
+						} `json:"y"`
+					} `json:"properties"`
+				} `json:"viewbox"`
+			} `json:"definitions"`
+		}
+		require.NoError(t, json.Unmarshal(jsond, &yt))
+
+		assert.Equal(t, "integer", yt.Definitions.Viewbox.Properties.Y.Type)
+	})
 }
 
 const withQuotedYKey = `consumes:
