@@ -30,7 +30,7 @@ func TestLoadJSON(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, s)
 
-	ts2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	ts2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
 		rw.WriteHeader(http.StatusNotFound)
 		_, _ = rw.Write([]byte("{}"))
 	}))
@@ -39,7 +39,7 @@ func TestLoadJSON(t *testing.T) {
 	require.Error(t, err)
 }
 
-var jsonPestoreServer = func(rw http.ResponseWriter, r *http.Request) {
+var jsonPestoreServer = func(rw http.ResponseWriter, _ *http.Request) {
 	rw.WriteHeader(http.StatusOK)
 	_, _ = rw.Write([]byte(petstoreJSON))
 }

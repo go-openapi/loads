@@ -47,7 +47,7 @@ func TestLoadHTTPBytes(t *testing.T) {
 	_, err = swag.LoadFromFileOrHTTP(serv.URL)
 	require.Error(t, err)
 
-	ts2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	ts2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
 		rw.WriteHeader(http.StatusOK)
 		_, _ = rw.Write([]byte("the content"))
 	}))
@@ -129,10 +129,10 @@ name: a string value
 }
 
 func TestLoadStrategy(t *testing.T) {
-	loader := func(p string) ([]byte, error) {
+	loader := func(_ string) ([]byte, error) {
 		return []byte(yamlPetStore), nil
 	}
-	remLoader := func(p string) ([]byte, error) {
+	remLoader := func(_ string) ([]byte, error) {
 		return []byte("not it"), nil
 	}
 
