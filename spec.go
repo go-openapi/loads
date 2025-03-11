@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/go-openapi/analysis"
@@ -102,7 +103,7 @@ func Analyzed(data json.RawMessage, version string, options ...LoaderOption) (*D
 		version = "2.0"
 	}
 	if version != "2.0" {
-		return nil, fmt.Errorf("spec version %q is not supported", version)
+		return nil, fmt.Errorf("spec version %q is not supported: %w", version, ErrLoads)
 	}
 
 	raw, err := trimData(data) // trim blanks, then convert yaml docs into json
@@ -112,12 +113,12 @@ func Analyzed(data json.RawMessage, version string, options ...LoaderOption) (*D
 
 	swspec := new(spec.Swagger)
 	if err = json.Unmarshal(raw, swspec); err != nil {
-		return nil, err
+		return nil, errors.Join(err, ErrLoads)
 	}
 
 	origsqspec, err := cloneSpec(swspec)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, ErrLoads)
 	}
 
 	d := &Document{
@@ -145,12 +146,12 @@ func trimData(in json.RawMessage) (json.RawMessage, error) {
 	// assume yaml doc: convert it to json
 	yml, err := swag.BytesToYAMLDoc(trimmed)
 	if err != nil {
-		return nil, fmt.Errorf("analyzed: %v", err)
+		return nil, fmt.Errorf("analyzed: %v: %w", err, ErrLoads)
 	}
 
 	d, err := swag.YAMLToJSON(yml)
 	if err != nil {
-		return nil, fmt.Errorf("analyzed: %v", err)
+		return nil, fmt.Errorf("analyzed: %v: %w", err, ErrLoads)
 	}
 
 	return d, nil
@@ -271,5 +272,6 @@ func cloneSpec(src *spec.Swagger) (*spec.Swagger, error) {
 	if err := gob.NewDecoder(&b).Decode(&dst); err != nil {
 		return nil, err
 	}
+
 	return &dst, nil
 }

@@ -28,11 +28,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var errTest = errors.New("expected")
+
 type failJSONMarshal struct {
 }
 
 func (f failJSONMarshal) MarshalJSON() ([]byte, error) {
-	return nil, errors.New("expected")
+	return nil, errTest
 }
 
 func TestLoadHTTPBytes(t *testing.T) {
@@ -124,7 +126,7 @@ name: a string value
 
 		d, err := YAMLToJSON(dd)
 		require.NoError(t, err)
-		assert.Equal(t, json.RawMessage(`{"description":"object created"}`), d)
+		assert.YAMLEq(t, `{"description":"object created"}`, string(d))
 	})
 }
 
@@ -138,7 +140,7 @@ func TestLoadStrategy(t *testing.T) {
 
 	ld := swag.LoadStrategy("blah", loader, remLoader)
 	b, _ := ld("")
-	assert.Equal(t, []byte(yamlPetStore), b)
+	assert.YAMLEq(t, yamlPetStore, string(b))
 
 	serv := httptest.NewServer(http.HandlerFunc(yamlPestoreServer))
 	defer serv.Close()
