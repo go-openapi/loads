@@ -83,10 +83,10 @@ func (l *loader) WithNext(next *loader) *loader {
 func (l *loader) Load(path string) (json.RawMessage, error) {
 	_, erp := url.Parse(path)
 	if erp != nil {
-		return nil, erp
+		return nil, errors.Join(erp, ErrLoads)
 	}
 
-	lastErr := errors.New("no loader matched") // default error if no match was found
+	var lastErr error = ErrNoLoader // default error if no match was found
 	for ldr := l; ldr != nil; ldr = ldr.Next {
 		if ldr.Match != nil && !ldr.Match(path) {
 			continue
@@ -101,14 +101,14 @@ func (l *loader) Load(path string) (json.RawMessage, error) {
 		lastErr = err
 	}
 
-	return nil, lastErr
+	return nil, errors.Join(lastErr, ErrLoads)
 }
 
 // JSONDoc loads a json document from either a file or a remote url
 func JSONDoc(path string) (json.RawMessage, error) {
 	data, err := swag.LoadFromFileOrHTTP(path)
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, ErrLoads)
 	}
 	return json.RawMessage(data), nil
 }

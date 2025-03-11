@@ -14,6 +14,8 @@ import (
 
 const optionFixture = "fixtures/json/resources/pathLoaderIssue.json"
 
+var errTest = errors.New("test")
+
 func TestOptionsWithDocLoader(t *testing.T) {
 	document, err := Spec(optionFixture, WithDocLoader(func(pth string) (json.RawMessage, error) {
 		buf, err := os.ReadFile(pth)
@@ -105,11 +107,11 @@ func TestOptionsWithDocLoaderMatches(t *testing.T) {
 
 	// the nil matcher always matches
 	nilMatcher := NewDocLoaderWithMatch(func(_ string) (json.RawMessage, error) {
-		return nil, errors.New("test")
+		return nil, errTest
 	}, nil)
 	_, err = Spec(optionFixture, WithDocLoaderMatches(nilMatcher))
 	require.Error(t, err)
-	require.Equal(t, "test", err.Error())
+	require.ErrorIs(t, err, errTest)
 
 	// when a matcher returns an errors, the next one is tried
 	document, err = Spec(optionFixture, WithDocLoaderMatches(nilMatcher, jsonLoader, yamlLoader))
