@@ -30,7 +30,7 @@ var extensions = []string{"json"}
 
 //nolint:unparam
 func assertSpecJSON(t testing.TB, specJSON []byte) bool {
-	var expected map[string]interface{}
+	var expected map[string]any
 	require.NoError(t, json.Unmarshal(specJSON, &expected))
 
 	obj := spec.Swagger{}
@@ -39,13 +39,13 @@ func assertSpecJSON(t testing.TB, specJSON []byte) bool {
 	cb, err := json.MarshalIndent(obj, "", "  ")
 	require.NoError(t, err)
 
-	var actual map[string]interface{}
+	var actual map[string]any
 	require.NoError(t, json.Unmarshal(cb, &actual))
 
 	return assertSpecMaps(t, actual, expected)
 }
 
-func assertSpecMaps(t testing.TB, actual, expected map[string]interface{}) bool {
+func assertSpecMaps(t testing.TB, actual, expected map[string]any) bool {
 	res := true
 	if id, ok := expected["id"]; ok {
 		res = assert.Equal(t, id, actual["id"])
@@ -70,21 +70,21 @@ func assertSpecMaps(t testing.TB, actual, expected map[string]interface{}) bool 
 }
 
 //nolint:unparam
-func roundTripTest(t *testing.T, fixtureType, extension, fileName string, schema interface{}) bool {
+func roundTripTest(t *testing.T, fixtureType, extension, fileName string, schema any) bool {
 	if extension == "yaml" {
 		return roundTripTestYAML(t, fixtureType, fileName, schema)
 	}
 	return roundTripTestJSON(t, fixtureType, fileName, schema)
 }
 
-func roundTripTestJSON(t *testing.T, fixtureType, fileName string, schema interface{}) bool {
+func roundTripTestJSON(t *testing.T, fixtureType, fileName string, schema any) bool {
 	specName := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 	t.Logf("verifying %s JSON fixture %q", fixtureType, specName)
 
 	b, err := os.ReadFile(fileName)
 	require.NoError(t, err)
 
-	var expected map[string]interface{}
+	var expected map[string]any
 	require.NoError(t, json.Unmarshal(b, &expected))
 
 	require.NoError(t, json.Unmarshal(b, schema))
@@ -92,20 +92,20 @@ func roundTripTestJSON(t *testing.T, fixtureType, fileName string, schema interf
 	cb, err := json.MarshalIndent(schema, "", "  ")
 	require.NoError(t, err)
 
-	var actual map[string]interface{}
+	var actual map[string]any
 	require.NoError(t, json.Unmarshal(cb, &actual))
 
-	return assert.EqualValues(t, expected, actual)
+	return assert.Equal(t, expected, actual)
 }
 
-func roundTripTestYAML(t *testing.T, fixtureType, fileName string, schema interface{}) bool {
+func roundTripTestYAML(t *testing.T, fixtureType, fileName string, schema any) bool {
 	specName := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 	t.Logf("verifying %s YAML fixture %q", fixtureType, specName)
 
 	b, err := YAMLDoc(fileName)
 	require.NoError(t, err)
 
-	var expected map[string]interface{}
+	var expected map[string]any
 	require.NoError(t, json.Unmarshal(b, &expected))
 
 	require.NoError(t, json.Unmarshal(b, schema))
@@ -113,10 +113,10 @@ func roundTripTestYAML(t *testing.T, fixtureType, fileName string, schema interf
 	cb, err := json.MarshalIndent(schema, "", "  ")
 	require.NoError(t, err)
 
-	var actual map[string]interface{}
+	var actual map[string]any
 	require.NoError(t, json.Unmarshal(cb, &actual))
 
-	return assert.EqualValues(t, expected, actual)
+	return assert.Equal(t, expected, actual)
 }
 
 func TestPropertyFixtures(t *testing.T) {
@@ -127,9 +127,6 @@ func TestPropertyFixtures(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// for _, f := range files {
-		// 	roundTripTest(t, "property", extension, filepath.Join(path, f.Name()), &Schema{})
-		// }
 		f := files[0]
 		roundTripTest(t, "property", extension, filepath.Join(path, f.Name()), &spec.Schema{})
 	}
@@ -139,14 +136,14 @@ func TestAdditionalPropertiesWithObject(t *testing.T) {
 	schema := new(spec.Schema)
 	b, err := YAMLDoc("../fixtures/yaml/models/modelWithObjectMap.yaml")
 	require.NoError(t, err)
-	var expected map[string]interface{}
+	var expected map[string]any
 	require.NoError(t, json.Unmarshal(b, &expected))
 	require.NoError(t, json.Unmarshal(b, schema))
 
 	cb, err := json.MarshalIndent(schema, "", "  ")
 	require.NoError(t, err)
 
-	var actual map[string]interface{}
+	var actual map[string]any
 	require.NoError(t, json.Unmarshal(cb, &actual))
 	assert.Equal(t, expected, actual)
 }

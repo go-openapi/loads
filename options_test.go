@@ -31,7 +31,7 @@ func TestOptionsWithDocLoader(t *testing.T) {
 	trimmed, err := trimData(b)
 	require.NoError(t, err)
 
-	assert.EqualValues(t, trimmed, document.Raw())
+	assert.Equal(t, trimmed, document.Raw())
 
 	// a nil loader is a no op
 	_, err = Spec(optionFixture, WithDocLoader(nil))

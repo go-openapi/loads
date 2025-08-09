@@ -61,6 +61,7 @@ func NewDocLoaderWithMatch(fn DocLoader, matcher DocMatcher) DocLoaderWithMatch 
 
 type loader struct {
 	DocLoaderWithMatch
+
 	Next *loader
 }
 
