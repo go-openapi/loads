@@ -203,6 +203,9 @@ func (d *Document) Expanded(options ...*spec.ExpandOptions) (*Document, error) {
 
 // BasePath the base path for the API specified by this spec
 func (d *Document) BasePath() string {
+	if d.spec == nil {
+		return ""
+	}
 	return d.spec.BasePath
 }
 
