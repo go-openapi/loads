@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 
 	"github.com/go-openapi/loads"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/loading"
 )
 
-func ExampleSpec() {
-	// Example with default loaders defined at the package level
+// Example with default loaders defined at the package level
+func ExampleSpec_file() {
 
 	path := "fixtures/yaml/swagger/spec.yml"
 	doc, err := loads.Spec(path)
@@ -25,14 +25,13 @@ func ExampleSpec() {
 	// Output: Spec loaded: "api.example.com"
 }
 
+// Example with custom loaders passed as options
 func ExampleLoaderOption() {
-	// Example with custom loaders passed as options
-
 	path := "fixtures/yaml/swagger/spec.yml"
 
 	// a simpler version of loads.JSONDoc
 	jsonLoader := loads.NewDocLoaderWithMatch(
-		func(pth string) (json.RawMessage, error) {
+		func(pth string, _ ...loading.Option) (json.RawMessage, error) {
 			buf, err := os.ReadFile(pth)
 			return json.RawMessage(buf), err
 		},
@@ -43,9 +42,9 @@ func ExampleLoaderOption() {
 
 	// equivalent to the default loader at the package level, which does:
 	//
-	//   loads.AddLoader(swag.YAMLMatcher, swag.YAMLDoc)
+	//   loads.AddLoader(loading.YAMLMatcher, loading.YAMLDoc)
 	yamlLoader := loads.NewDocLoaderWithMatch(
-		swag.YAMLDoc,
+		loading.YAMLDoc,
 		func(pth string) bool {
 			return filepath.Ext(pth) == ".yml"
 		},

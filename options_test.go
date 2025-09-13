@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/loading"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,7 +17,7 @@ const optionFixture = "fixtures/json/resources/pathLoaderIssue.json"
 var errTest = errors.New("test")
 
 func TestOptionsWithDocLoader(t *testing.T) {
-	document, err := Spec(optionFixture, WithDocLoader(func(pth string) (json.RawMessage, error) {
+	document, err := Spec(optionFixture, WithDocLoader(func(pth string, _ ...loading.Option) (json.RawMessage, error) {
 		buf, err := os.ReadFile(pth)
 		return json.RawMessage(buf), err
 	}))
@@ -43,12 +43,12 @@ func TestOptionsLoaderFromOptions(t *testing.T) {
 
 	// not chaining here, just replacing with the last one
 	l := loaderFromOptions([]LoaderOption{
-		WithDocLoader(func(pth string) (json.RawMessage, error) {
+		WithDocLoader(func(pth string, _ ...loading.Option) (json.RawMessage, error) {
 			called = 1
 			buf, err := os.ReadFile(pth)
 			return json.RawMessage(buf), err
 		}),
-		WithDocLoader(func(pth string) (json.RawMessage, error) {
+		WithDocLoader(func(pth string, _ ...loading.Option) (json.RawMessage, error) {
 			called = 2
 			buf, err := os.ReadFile(pth)
 			return json.RawMessage(buf), err
@@ -65,7 +65,7 @@ func TestOptionsLoaderFromOptions(t *testing.T) {
 
 func TestOptionsWithDocLoaderMatches(t *testing.T) {
 	jsonLoader := NewDocLoaderWithMatch(
-		func(pth string) (json.RawMessage, error) {
+		func(pth string, _ ...loading.Option) (json.RawMessage, error) {
 			buf, err := os.ReadFile(pth)
 			return json.RawMessage(buf), err
 		},
@@ -80,7 +80,7 @@ func TestOptionsWithDocLoaderMatches(t *testing.T) {
 	require.NotNil(t, document.pathLoader)
 
 	yamlLoader := NewDocLoaderWithMatch(
-		swag.YAMLDoc,
+		loading.YAMLDoc,
 		func(pth string) bool {
 			return filepath.Ext(pth) == ".yaml"
 		},
@@ -106,7 +106,7 @@ func TestOptionsWithDocLoaderMatches(t *testing.T) {
 	require.NotNil(t, document)
 
 	// the nil matcher always matches
-	nilMatcher := NewDocLoaderWithMatch(func(_ string) (json.RawMessage, error) {
+	nilMatcher := NewDocLoaderWithMatch(func(_ string, _ ...loading.Option) (json.RawMessage, error) {
 		return nil, errTest
 	}, nil)
 	_, err = Spec(optionFixture, WithDocLoaderMatches(nilMatcher))

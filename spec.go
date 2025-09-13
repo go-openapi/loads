@@ -20,15 +20,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 
 	"github.com/go-openapi/analysis"
 	"github.com/go-openapi/spec"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/yamlutils"
 )
 
 func init() {
-	gob.Register(map[string]interface{}{})
-	gob.Register([]interface{}{})
+	gob.Register(map[string]any{})
+	gob.Register([]any{})
 }
 
 // Document represents a swagger spec document
@@ -43,14 +44,21 @@ type Document struct {
 	raw          json.RawMessage
 }
 
-// JSONSpec loads a spec from a json document
-func JSONSpec(path string, options ...LoaderOption) (*Document, error) {
-	data, err := JSONDoc(path)
+// JSONSpec loads a spec from a json document, using the [JSONDoc] loader.
+//
+// A set of [loading.Option] may be passed to this loader using [WithLoadingOptions].
+func JSONSpec(path string, opts ...LoaderOption) (*Document, error) {
+	var o options
+	for _, apply := range opts {
+		apply(&o)
+	}
+
+	data, err := JSONDoc(path, o.loadingOptions...)
 	if err != nil {
 		return nil, err
 	}
 	// convert to json
-	doc, err := Analyzed(data, "", options...)
+	doc, err := Analyzed(data, "", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +68,8 @@ func JSONSpec(path string, options ...LoaderOption) (*Document, error) {
 	return doc, nil
 }
 
-// Embedded returns a Document based on embedded specs. No analysis is required
-func Embedded(orig, flat json.RawMessage, options ...LoaderOption) (*Document, error) {
+// Embedded returns a Document based on embedded specs (i.e. as a raw [json.RawMessage]). No analysis is required
+func Embedded(orig, flat json.RawMessage, opts ...LoaderOption) (*Document, error) {
 	var origSpec, flatSpec spec.Swagger
 	if err := json.Unmarshal(orig, &origSpec); err != nil {
 		return nil, err
@@ -73,20 +81,22 @@ func Embedded(orig, flat json.RawMessage, options ...LoaderOption) (*Document, e
 		raw:        orig,
 		origSpec:   &origSpec,
 		spec:       &flatSpec,
-		pathLoader: loaderFromOptions(options),
+		pathLoader: loaderFromOptions(opts),
 	}, nil
 }
 
-// Spec loads a new spec document from a local or remote path
-func Spec(path string, options ...LoaderOption) (*Document, error) {
-	ldr := loaderFromOptions(options)
+// Spec loads a new spec document from a local or remote path.
+//
+// By default it uses a JSON or YAML loader, with auto-detection based on the resource extension.
+func Spec(path string, opts ...LoaderOption) (*Document, error) {
+	ldr := loaderFromOptions(opts)
 
 	b, err := ldr.Load(path)
 	if err != nil {
 		return nil, err
 	}
 
-	document, err := Analyzed(b, "", options...)
+	document, err := Analyzed(b, "", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -144,12 +154,12 @@ func trimData(in json.RawMessage) (json.RawMessage, error) {
 	}
 
 	// assume yaml doc: convert it to json
-	yml, err := swag.BytesToYAMLDoc(trimmed)
+	yml, err := yamlutils.BytesToYAMLDoc(trimmed)
 	if err != nil {
 		return nil, fmt.Errorf("analyzed: %v: %w", err, ErrLoads)
 	}
 
-	d, err := swag.YAMLToJSON(yml)
+	d, err := yamlutils.YAMLToJSON(yml)
 	if err != nil {
 		return nil, fmt.Errorf("analyzed: %v: %w", err, ErrLoads)
 	}
@@ -157,7 +167,7 @@ func trimData(in json.RawMessage) (json.RawMessage, error) {
 	return d, nil
 }
 
-// Expanded expands the $ref fields in the spec document and returns a new spec document
+// Expanded expands the $ref fields in the spec [Document] and returns a new expanded [Document]
 func (d *Document) Expanded(options ...*spec.ExpandOptions) (*Document, error) {
 	swspec := new(spec.Swagger)
 	if err := json.Unmarshal(d.raw, swspec); err != nil {
@@ -209,17 +219,17 @@ func (d *Document) BasePath() string {
 	return d.spec.BasePath
 }
 
-// Version returns the version of this spec
+// Version returns the OpenAPI version of this spec (e.g. 2.0)
 func (d *Document) Version() string {
 	return d.spec.Swagger
 }
 
-// Schema returns the swagger 2.0 schema
+// Schema returns the swagger 2.0 meta-schema
 func (d *Document) Schema() *spec.Schema {
 	return d.schema
 }
 
-// Spec returns the swagger spec object model
+// Spec returns the swagger object model for this API specification
 func (d *Document) Spec() *spec.Swagger {
 	return d.spec
 }
@@ -239,14 +249,11 @@ func (d *Document) OrigSpec() *spec.Swagger {
 	return d.origSpec
 }
 
-// ResetDefinitions gives a shallow copy with the models reset to the original spec
+// ResetDefinitions yields a shallow copy with the models reset to the original spec
 func (d *Document) ResetDefinitions() *Document {
-	defs := make(map[string]spec.Schema, len(d.origSpec.Definitions))
-	for k, v := range d.origSpec.Definitions {
-		defs[k] = v
-	}
+	d.spec.Definitions = make(map[string]spec.Schema, len(d.origSpec.Definitions))
+	maps.Copy(d.spec.Definitions, d.origSpec.Definitions)
 
-	d.spec.Definitions = defs
 	return d
 }
 

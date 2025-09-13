@@ -23,7 +23,7 @@ import (
 
 	yaml "gopkg.in/yaml.v3"
 
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/loading"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -38,7 +38,7 @@ func (f failJSONMarshal) MarshalJSON() ([]byte, error) {
 }
 
 func TestLoadHTTPBytes(t *testing.T) {
-	_, err := swag.LoadFromFileOrHTTP("httx://12394:abd")
+	_, err := loading.LoadFromFileOrHTTP("httx://12394:abd")
 	require.Error(t, err)
 
 	serv := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
@@ -46,7 +46,7 @@ func TestLoadHTTPBytes(t *testing.T) {
 	}))
 	defer serv.Close()
 
-	_, err = swag.LoadFromFileOrHTTP(serv.URL)
+	_, err = loading.LoadFromFileOrHTTP(serv.URL)
 	require.Error(t, err)
 
 	ts2 := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
@@ -55,7 +55,7 @@ func TestLoadHTTPBytes(t *testing.T) {
 	}))
 	defer ts2.Close()
 
-	d, err := swag.LoadFromFileOrHTTP(ts2.URL)
+	d, err := loading.LoadFromFileOrHTTP(ts2.URL)
 	require.NoError(t, err)
 	assert.Equal(t, []byte("the content"), d)
 }
@@ -138,7 +138,7 @@ func TestLoadStrategy(t *testing.T) {
 		return []byte("not it"), nil
 	}
 
-	ld := swag.LoadStrategy("blah", loader, remLoader)
+	ld := loading.LoadStrategy("blah", loader, remLoader)
 	b, _ := ld("")
 	assert.YAMLEq(t, yamlPetStore, string(b))
 

@@ -14,17 +14,20 @@
 
 package fmts
 
-import "github.com/go-openapi/swag"
+import (
+	"github.com/go-openapi/swag/loading"
+	"github.com/go-openapi/swag/yamlutils"
+)
 
 var (
 	// YAMLMatcher matches yaml
-	YAMLMatcher = swag.YAMLMatcher
+	YAMLMatcher = loading.YAMLMatcher
 	// YAMLToJSON converts YAML unmarshaled data into json compatible data
-	YAMLToJSON = swag.YAMLToJSON
+	YAMLToJSON = yamlutils.YAMLToJSON
 	// BytesToYAMLDoc converts raw bytes to a map[string]interface{}
-	BytesToYAMLDoc = swag.BytesToYAMLDoc
+	BytesToYAMLDoc = yamlutils.BytesToYAMLDoc
 	// YAMLDoc loads a yaml document from either http or a file and converts it to json
-	YAMLDoc = swag.YAMLDoc
+	YAMLDoc = loading.YAMLDoc
 	// YAMLData loads a yaml document from either http or a file
-	YAMLData = swag.YAMLData
+	YAMLData = loading.YAMLData
 )
