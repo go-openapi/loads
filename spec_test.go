@@ -267,7 +267,7 @@ func BenchmarkAnalyzed(b *testing.B) {
       }
     }`)
 
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		d = append(d, []byte(`,
     "/pets/`)...)
 		d = strconv.AppendInt(d, int64(i), 10)
@@ -456,7 +456,7 @@ func BenchmarkAnalyzed(b *testing.B) {
 `)...)
 	rm := json.RawMessage(d)
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, err := Analyzed(rm, "")
 		if err != nil {
 			b.Fatal(err)
