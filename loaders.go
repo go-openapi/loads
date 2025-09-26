@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/url"
+	"slices"
 
 	"github.com/go-openapi/spec"
 	"github.com/go-openapi/swag/loading"
@@ -105,6 +106,18 @@ func (l *loader) Load(path string) (json.RawMessage, error) {
 	}
 
 	return nil, errors.Join(lastErr, ErrLoads)
+}
+
+func (l *loader) clone() *loader {
+	if l == nil {
+		return nil
+	}
+
+	return &loader{
+		DocLoaderWithMatch: l.DocLoaderWithMatch,
+		loadingOptions:     slices.Clone(l.loadingOptions),
+		Next:               l.Next.clone(),
+	}
 }
 
 // JSONDoc loads a json document from either a file or a remote url.

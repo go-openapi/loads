@@ -19,7 +19,7 @@ func loaderFromOptions(options []LoaderOption) *loader {
 		apply(opts)
 	}
 
-	l := opts.loader
+	l := opts.loader.clone()
 	l.loadingOptions = opts.loadingOptions
 
 	return l

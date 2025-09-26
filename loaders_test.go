@@ -16,4 +16,8 @@ func TestLoader_EdgeCases(t *testing.T) {
 
 	_, err := ldr.Load(`d\::invalid uri\`)
 	require.Error(t, err)
+
+	clone := ldr.clone()
+	cnext := clone.WithHead(nil)
+	require.Equal(t, clone, cnext)
 }
