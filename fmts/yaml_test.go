@@ -21,7 +21,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	yaml "gopkg.in/yaml.v3"
+	yaml "go.yaml.in/yaml/v3"
 
 	"github.com/go-openapi/swag/loading"
 	"github.com/stretchr/testify/assert"
