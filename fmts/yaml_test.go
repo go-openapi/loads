@@ -13,8 +13,9 @@ import (
 	yaml "go.yaml.in/yaml/v3"
 
 	"github.com/go-openapi/swag/loading"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	_ "github.com/go-openapi/testify/enable/yaml/v2"
+	"github.com/go-openapi/testify/v2/assert"
+	"github.com/go-openapi/testify/v2/require"
 )
 
 var errTest = errors.New("expected")
