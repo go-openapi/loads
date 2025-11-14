@@ -1,7 +1,7 @@
 module github.com/go-openapi/loads
 
 require (
-	github.com/go-openapi/analysis v0.24.0
+	github.com/go-openapi/analysis v0.24.1
 	github.com/go-openapi/spec v0.22.1
 	github.com/go-openapi/swag/loading v0.25.1
 	github.com/go-openapi/swag/yamlutils v0.25.1
