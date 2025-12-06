@@ -13,14 +13,12 @@ import (
 	"github.com/go-openapi/swag/loading"
 )
 
-var (
-	// Default chain of loaders, defined at the package level.
-	//
-	// By default this matches json and yaml documents.
-	//
-	// May be altered with AddLoader().
-	loaders *loader
-)
+// Default chain of loaders, defined at the package level.
+//
+// By default this matches json and yaml documents.
+//
+// May be altered with AddLoader().
+var loaders *loader
 
 func init() {
 	jsonLoader := &loader{
@@ -43,10 +41,10 @@ func init() {
 	spec.PathLoader = loaders.Load
 }
 
-// DocLoader represents a doc loader type
+// DocLoader represents a doc loader type.
 type DocLoader func(string, ...loading.Option) (json.RawMessage, error)
 
-// DocMatcher represents a predicate to check if a loader matches
+// DocMatcher represents a predicate to check if a loader matches.
 type DocMatcher func(string) bool
 
 // DocLoaderWithMatch describes a loading function for a given extension match.
@@ -55,7 +53,7 @@ type DocLoaderWithMatch struct {
 	Match DocMatcher
 }
 
-// NewDocLoaderWithMatch builds a DocLoaderWithMatch to be used in load options
+// NewDocLoaderWithMatch builds a DocLoaderWithMatch to be used in load options.
 func NewDocLoaderWithMatch(fn DocLoader, matcher DocMatcher) DocLoaderWithMatch {
 	return DocLoaderWithMatch{
 		Fn:    fn,
@@ -71,7 +69,7 @@ type loader struct {
 	Next *loader
 }
 
-// WithHead adds a loader at the head of the current stack
+// WithHead adds a loader at the head of the current stack.
 func (l *loader) WithHead(head *loader) *loader {
 	if head == nil {
 		return l
@@ -80,13 +78,13 @@ func (l *loader) WithHead(head *loader) *loader {
 	return head
 }
 
-// WithNext adds a loader at the trail of the current stack
+// WithNext adds a loader at the trail of the current stack.
 func (l *loader) WithNext(next *loader) *loader {
 	l.Next = next
 	return next
 }
 
-// Load the raw document from path
+// Load the raw document from path.
 func (l *loader) Load(path string) (json.RawMessage, error) {
 	_, erp := url.Parse(path)
 	if erp != nil {

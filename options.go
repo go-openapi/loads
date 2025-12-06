@@ -28,10 +28,10 @@ func loaderFromOptions(options []LoaderOption) *loader {
 	return l
 }
 
-// LoaderOption allows to fine-tune the spec loader behavior
+// LoaderOption allows to fine-tune the spec loader behavior.
 type LoaderOption func(*options)
 
-// WithDocLoader sets a custom loader for loading specs
+// WithDocLoader sets a custom loader for loading specs.
 func WithDocLoader(l DocLoader) LoaderOption {
 	return func(opt *options) {
 		if l == nil {

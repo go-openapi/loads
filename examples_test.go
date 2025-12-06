@@ -20,7 +20,7 @@ import (
 //go:embed fixtures
 var embeddedFixtures embed.FS
 
-// Loads a JSON document from http, with a custom header
+// Loads a JSON document from http, with a custom header.
 func ExampleJSONSpec_http_custom_header() {
 	ts := serveSomeJSONDocument()
 	defer ts.Close()

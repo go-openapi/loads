@@ -13,9 +13,8 @@ import (
 	"github.com/go-openapi/swag/loading"
 )
 
-// Example with default loaders defined at the package level
+// Example with default loaders defined at the package level.
 func ExampleSpec_file() {
-
 	path := "fixtures/yaml/swagger/spec.yml"
 	doc, err := loads.Spec(path)
 	if err != nil {
@@ -28,7 +27,7 @@ func ExampleSpec_file() {
 	// Output: Spec loaded: "api.example.com"
 }
 
-// Example with custom loaders passed as options
+// Example with custom loaders passed as options.
 func ExampleLoaderOption() {
 	path := "fixtures/yaml/swagger/spec.yml"
 
