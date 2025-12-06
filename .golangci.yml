@@ -4,6 +4,8 @@ linters:
   disable:
     - depguard
     - funlen
+    - gochecknoglobals # on this repo, it is hard to refactor without globals/inits and no breaking change
+    - gochecknoinits
     - godox
     - exhaustruct
     - nlreturn

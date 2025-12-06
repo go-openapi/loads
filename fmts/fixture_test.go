@@ -17,8 +17,10 @@ import (
 
 var extensions = []string{"json"}
 
-//nolint:unparam
-func assertSpecJSON(t testing.TB, specJSON []byte) bool {
+//nolint:unparam // reserved for future use
+func assertSpecJSON(t *testing.T, specJSON []byte) bool {
+	t.Helper()
+
 	var expected map[string]any
 	require.NoError(t, json.Unmarshal(specJSON, &expected))
 
@@ -34,7 +36,9 @@ func assertSpecJSON(t testing.TB, specJSON []byte) bool {
 	return assertSpecMaps(t, actual, expected)
 }
 
-func assertSpecMaps(t testing.TB, actual, expected map[string]any) bool {
+func assertSpecMaps(t *testing.T, actual, expected map[string]any) bool {
+	t.Helper()
+
 	res := true
 	if id, ok := expected["id"]; ok {
 		res = assert.Equal(t, id, actual["id"])
@@ -60,6 +64,8 @@ func assertSpecMaps(t testing.TB, actual, expected map[string]any) bool {
 
 //nolint:unparam
 func roundTripTest(t *testing.T, fixtureType, extension, fileName string, schema any) bool {
+	t.Helper()
+
 	if extension == "yaml" {
 		return roundTripTestYAML(t, fixtureType, fileName, schema)
 	}
@@ -67,6 +73,8 @@ func roundTripTest(t *testing.T, fixtureType, extension, fileName string, schema
 }
 
 func roundTripTestJSON(t *testing.T, fixtureType, fileName string, schema any) bool {
+	t.Helper()
+
 	specName := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 	t.Logf("verifying %s JSON fixture %q", fixtureType, specName)
 
@@ -88,6 +96,8 @@ func roundTripTestJSON(t *testing.T, fixtureType, fileName string, schema any) b
 }
 
 func roundTripTestYAML(t *testing.T, fixtureType, fileName string, schema any) bool {
+	t.Helper()
+
 	specName := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 	t.Logf("verifying %s YAML fixture %q", fixtureType, specName)
 

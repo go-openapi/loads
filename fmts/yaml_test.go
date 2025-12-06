@@ -20,8 +20,7 @@ import (
 
 var errTest = errors.New("expected")
 
-type failJSONMarshal struct {
-}
+type failJSONMarshal struct{}
 
 func (f failJSONMarshal) MarshalJSON() ([]byte, error) {
 	return nil, errTest

@@ -9,14 +9,14 @@ import (
 )
 
 var (
-	// YAMLMatcher matches yaml
+	// YAMLMatcher matches yaml.
 	YAMLMatcher = loading.YAMLMatcher
-	// YAMLToJSON converts YAML unmarshaled data into json compatible data
+	// YAMLToJSON converts YAML unmarshaled data into json compatible data.
 	YAMLToJSON = yamlutils.YAMLToJSON
-	// BytesToYAMLDoc converts raw bytes to a map[string]interface{}
+	// BytesToYAMLDoc converts raw bytes to a map[string]interface{}.
 	BytesToYAMLDoc = yamlutils.BytesToYAMLDoc
-	// YAMLDoc loads a yaml document from either http or a file and converts it to json
+	// YAMLDoc loads a yaml document from either http or a file and converts it to json.
 	YAMLDoc = loading.YAMLDoc
-	// YAMLData loads a yaml document from either http or a file
+	// YAMLData loads a yaml document from either http or a file.
 	YAMLData = loading.YAMLData
 )

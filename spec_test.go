@@ -39,7 +39,7 @@ func TestLoadsYAMLContent(t *testing.T) {
 	assert.Equal(t, "1.0.0", sw.Info.Version)
 }
 
-// for issue 11
+// for issue 11.
 func TestRegressionExpand(t *testing.T) {
 	swaggerFile := "fixtures/yaml/swagger/1/2/3/4/swagger.yaml"
 	document, err := Spec(swaggerFile)
@@ -50,7 +50,8 @@ func TestRegressionExpand(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, d)
 
-	b, _ := d.Spec().MarshalJSON()
+	b, err := d.Spec().MarshalJSON()
+	require.NoError(t, err)
 	assert.JSONEq(t, expectedExpanded, string(b))
 }
 
@@ -74,7 +75,7 @@ func TestFailsInvalidJSON(t *testing.T) {
 	require.Error(t, err)
 }
 
-// issue go-swagger/go-swagger#1816 (regression when cloning original spec)
+// issue go-swagger/go-swagger#1816 (regression when cloning original spec).
 func TestIssue1846(t *testing.T) {
 	swaggerFile := "fixtures/bugs/1816/fixture-1816.yaml"
 	document, err := Spec(swaggerFile)
@@ -84,7 +85,8 @@ func TestIssue1846(t *testing.T) {
 	sp, err := cloneSpec(document.Spec())
 	require.NoError(t, err)
 
-	jazon, _ := json.MarshalIndent(sp, "", " ")
+	jazon, err := json.MarshalIndent(sp, "", " ")
+	require.NoError(t, err)
 	rex := regexp.MustCompile(`"\$ref":\s*"(.+)"`)
 	m := rex.FindAllStringSubmatch(string(jazon), -1)
 	require.NotNil(t, m)
@@ -629,10 +631,10 @@ definitions:
         readOnly: true
 `
 
-// PetStoreJSONMessage json raw message for Petstore20
+// PetStoreJSONMessage json raw message for Petstore20.
 var PetStoreJSONMessage = json.RawMessage([]byte(PetStore20))
 
-// PetStore20 json doc for swagger 2.0 pet store
+// PetStore20 json doc for swagger 2.0 pet store.
 const PetStore20 = `{
   "swagger": "2.0",
   "info": {
