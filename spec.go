@@ -98,13 +98,6 @@ func Spec(path string, opts ...LoaderOption) (*Document, error) {
 
 // Analyzed creates a new analyzed spec document for a root json.RawMessage.
 func Analyzed(data json.RawMessage, version string, options ...LoaderOption) (*Document, error) {
-	if version == "" {
-		version = "2.0"
-	}
-	if version != "2.0" {
-		return nil, fmt.Errorf("spec version %q is not supported: %w", version, ErrLoads)
-	}
-
 	raw, err := trimData(data) // trim blanks, then convert yaml docs into json
 	if err != nil {
 		return nil, err
@@ -120,9 +113,24 @@ func Analyzed(data json.RawMessage, version string, options ...LoaderOption) (*D
 		return nil, errors.Join(err, ErrLoads)
 	}
 
+	// Auto-detect spec version and select appropriate schema
+	var schema *spec.Schema
+	if swspec.Swagger == "2.0" {
+		// Swagger 2.0 spec
+		schema = spec.MustLoadSwagger20Schema()
+	} else if swspec.OpenAPI != "" {
+		// OpenAPI 3.x spec
+		schema = spec.MustLoadOpenAPI32Schema()
+	} else if version == "2.0" || version == "" {
+		// Default to Swagger 2.0 for backward compatibility
+		schema = spec.MustLoadSwagger20Schema()
+	} else {
+		schema = spec.MustLoadOpenAPI32Schema()
+	}
+
 	d := &Document{
 		Analyzer:   analysis.New(swspec), // NOTE: at this moment, analysis does not follow $refs to documents outside the root doc
-		schema:     spec.MustLoadSwagger20Schema(),
+		schema:     schema,
 		spec:       swspec,
 		raw:        raw,
 		origSpec:   origsqspec,
@@ -208,8 +216,12 @@ func (d *Document) BasePath() string {
 	return d.spec.BasePath
 }
 
-// Version returns the OpenAPI version of this spec (e.g. 2.0).
+// Version returns the OpenAPI version of this spec (e.g. 2.0 or 3.0.0 for OpenAPI).
 func (d *Document) Version() string {
+	// Check OpenAPI v3 version first
+	if d.spec.OpenAPI != "" {
+		return d.spec.OpenAPI
+	}
 	return d.spec.Swagger
 }
 
