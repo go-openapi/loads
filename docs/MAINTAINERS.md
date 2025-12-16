@@ -138,11 +138,13 @@ Standard documentation:
 * [`CODE_OF_CONDUCT.md`](../CODE_OF_CONDUCT.md)
 * [`SECURIY.md`](../SECURITY.md) policy: how to report vulnerabilities privately
 * [`LICENSE`](../LICENSE) terms
+<!--
 * [`NOTICE`](../NOTICE) on supplementary license terms (original authors, copied code etc)
+-->
 
 Reference documentation (released):
 
-* [godoc](https://pkg.go/dev/go-openapi/jsonpointer)
+* [godoc](https://pkg.go.dev/github.com/go-openapi/jsonpointer)
 
 ## TODOs & other ideas
 
