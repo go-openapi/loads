@@ -58,9 +58,6 @@ See <https://github.com/go-openapi/loads/releases>
 
 This library ships under the [SPDX-License-Identifier: Apache-2.0](./LICENSE).
 
-See the license [NOTICE](./NOTICE), which recalls the licensing terms of all the pieces of software
-on top of which it has been built.
-
 ## Other documentation
 
 * [All-time contributors](./CONTRIBUTORS.md)
