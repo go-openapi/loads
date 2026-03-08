@@ -53,7 +53,7 @@ type DocLoaderWithMatch struct {
 	Match DocMatcher
 }
 
-// NewDocLoaderWithMatch builds a DocLoaderWithMatch to be used in load options.
+// NewDocLoaderWithMatch builds a [DocLoaderWithMatch] to be used in load options.
 func NewDocLoaderWithMatch(fn DocLoader, matcher DocMatcher) DocLoaderWithMatch {
 	return DocLoaderWithMatch{
 		Fn:    fn,
@@ -121,9 +121,9 @@ func (l *loader) clone() *loader {
 	}
 }
 
-// JSONDoc loads a json document from either a file or a remote url.
+// JSONDoc loads a json document from either a file or a remote URL.
 //
-// See [loading.Option] for available options (e.g. configuring authentifaction,
+// See [loading.Option] for available options (e.g. configuring authentication,
 // headers or using embedded file system resources).
 func JSONDoc(path string, opts ...loading.Option) (json.RawMessage, error) {
 	data, err := loading.LoadFromFileOrHTTP(path, opts...)
@@ -137,9 +137,10 @@ func JSONDoc(path string, opts ...loading.Option) (json.RawMessage, error) {
 //
 // This sets the configuration at the package level.
 //
-// NOTE:
-//   - this updates the default loader used by github.com/go-openapi/spec
-//   - since this sets package level globals, you shouln't call this concurrently
+// # Concurrency
+//
+// This function updates the default loader used by [github.com/go-openapi/spec].
+// Since this sets package level globals, you shouldn't call this concurrently.
 func AddLoader(predicate DocMatcher, load DocLoader) {
 	loaders = loaders.WithHead(&loader{
 		DocLoaderWithMatch: DocLoaderWithMatch{

@@ -33,7 +33,7 @@ type Document struct {
 	raw          json.RawMessage
 }
 
-// JSONSpec loads a spec from a json document, using the [JSONDoc] loader.
+// JSONSpec loads a spec from a JSON document, using the [JSONDoc] loader.
 //
 // A set of [loading.Option] may be passed to this loader using [WithLoadingOptions].
 func JSONSpec(path string, opts ...LoaderOption) (*Document, error) {
@@ -57,7 +57,7 @@ func JSONSpec(path string, opts ...LoaderOption) (*Document, error) {
 	return doc, nil
 }
 
-// Embedded returns a Document based on embedded specs (i.e. as a raw [json.RawMessage]). No analysis is required.
+// Embedded returns a Document based on embedded specs (i.e. as a [json.RawMessage]). No analysis is required.
 func Embedded(orig, flat json.RawMessage, opts ...LoaderOption) (*Document, error) {
 	var origSpec, flatSpec spec.Swagger
 	if err := json.Unmarshal(orig, &origSpec); err != nil {
@@ -96,7 +96,7 @@ func Spec(path string, opts ...LoaderOption) (*Document, error) {
 	return document, nil
 }
 
-// Analyzed creates a new analyzed spec document for a root json.RawMessage.
+// Analyzed creates a new analyzed spec document for a root [json.RawMessage].
 func Analyzed(data json.RawMessage, version string, options ...LoaderOption) (*Document, error) {
 	if version == "" {
 		version = "2.0"

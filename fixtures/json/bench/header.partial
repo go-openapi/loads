@@ -1,0 +1,101 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Swagger Petstore",
+    "contact": {
+      "name": "Wordnik API Team",
+      "url": "http://developer.wordnik.com"
+    },
+    "license": {
+      "name": "Creative Commons 4.0 International",
+      "url": "http://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "host": "petstore.swagger.wordnik.com",
+  "basePath": "/api",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/pets": {
+      "get": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "tags": [ "Pet Operations" ],
+        "operationId": "getAllPets",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "The status to filter by",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of results to return",
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "summary": "Finds all pets in the system",
+        "responses": {
+          "200": {
+            "description": "Pet response",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Pet"
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "basic": []
+          }
+        ],
+        "tags": [ "Pet Operations" ],
+        "operationId": "createPet",
+        "summary": "Creates a new pet",
+        "consumes": ["application/x-yaml"],
+        "produces": ["application/x-yaml"],
+        "parameters": [
+          {
+            "name": "pet",
+            "in": "body",
+            "description": "The Pet to create",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/newPet"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created Pet response",
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          },
+          "default": {
+            "description": "Unexpected error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }

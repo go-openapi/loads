@@ -26,7 +26,6 @@ You may join the discord community by clicking the invite link on the discord ba
 
 Or join our Slack channel: [![Slack Channel][slack-logo]![slack-badge]][slack-url]
 
-
 ## Status
 
 API is stable.
@@ -58,7 +57,6 @@ go get github.com/go-openapi/loads
 ```
 
 See also the provided [examples](https://pkg.go.dev/github.com/go-openapi/loads#pkg-examples).
-
 
 ## Change log
 
@@ -96,23 +94,19 @@ Maintainers can cut a new release by either:
 <!-- Badges: release & docker images  -->
 [release-badge]: https://badge.fury.io/gh/go-openapi%2Floads.svg
 [release-url]: https://badge.fury.io/gh/go-openapi%2Floads
-[gomod-badge]: https://badge.fury.io/go/github.com%2Fgo-openapi%2Floads.svg
-[gomod-url]: https://badge.fury.io/go/github.com%2Fgo-openapi%2Floads
 <!-- Badges: code quality  -->
 [gocard-badge]: https://goreportcard.com/badge/github.com/go-openapi/loads
 [gocard-url]: https://goreportcard.com/report/github.com/go-openapi/loads
 [codefactor-badge]: https://img.shields.io/codefactor/grade/github/go-openapi/loads
 [codefactor-url]: https://www.codefactor.io/repository/github/go-openapi/loads
 <!-- Badges: documentation & support -->
-[doc-badge]: https://img.shields.io/badge/doc-site-blue?link=https%3A%2F%2Fgoswagger.io%2Fgo-openapi%2F
-[doc-url]: https://goswagger.io/go-openapi
 [godoc-badge]: https://pkg.go.dev/badge/github.com/go-openapi/loads
 [godoc-url]: http://pkg.go.dev/github.com/go-openapi/loads
 [slack-logo]: https://a.slack-edge.com/e6a93c1/img/icons/favicon-32.png
 [slack-badge]: https://img.shields.io/badge/slack-blue?link=https%3A%2F%2Fgoswagger.slack.com%2Farchives%2FC04R30YM
 [slack-url]: https://goswagger.slack.com/archives/C04R30YMU
 [discord-badge]: https://img.shields.io/discord/1446918742398341256?logo=discord&label=discord&color=blue
-[discord-url]: https://discord.gg/DrafRmZx
+[discord-url]: https://discord.gg/twZ9BwT3
 
 <!-- Badges: license & compliance -->
 [license-badge]: http://img.shields.io/badge/license-Apache%20v2-orange.svg

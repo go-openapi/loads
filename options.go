@@ -48,7 +48,7 @@ func WithDocLoader(l DocLoader) LoaderOption {
 // WithDocLoaderMatches sets a chain of custom loaders for loading specs
 // for different extension matches.
 //
-// Loaders are executed in the order of provided DocLoaderWithMatch'es.
+// Loaders are executed in the order of provided [DocLoaderWithMatch] 'es.
 func WithDocLoaderMatches(l ...DocLoaderWithMatch) LoaderOption {
 	return func(opt *options) {
 		var final, prev *loader
