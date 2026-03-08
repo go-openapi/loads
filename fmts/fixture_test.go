@@ -81,18 +81,9 @@ func roundTripTestJSON(t *testing.T, fixtureType, fileName string, schema any) b
 	b, err := os.ReadFile(fileName)
 	require.NoError(t, err)
 
-	var expected map[string]any
-	require.NoError(t, json.Unmarshal(b, &expected))
-
 	require.NoError(t, json.Unmarshal(b, schema))
 
-	cb, err := json.MarshalIndent(schema, "", "  ")
-	require.NoError(t, err)
-
-	var actual map[string]any
-	require.NoError(t, json.Unmarshal(cb, &actual))
-
-	return assert.Equal(t, expected, actual)
+	return assert.JSONMarshalAsT(t, b, schema)
 }
 
 func roundTripTestYAML(t *testing.T, fixtureType, fileName string, schema any) bool {
@@ -104,18 +95,9 @@ func roundTripTestYAML(t *testing.T, fixtureType, fileName string, schema any) b
 	b, err := YAMLDoc(fileName)
 	require.NoError(t, err)
 
-	var expected map[string]any
-	require.NoError(t, json.Unmarshal(b, &expected))
-
 	require.NoError(t, json.Unmarshal(b, schema))
 
-	cb, err := json.MarshalIndent(schema, "", "  ")
-	require.NoError(t, err)
-
-	var actual map[string]any
-	require.NoError(t, json.Unmarshal(cb, &actual))
-
-	return assert.Equal(t, expected, actual)
+	return assert.JSONMarshalAsT(t, b, schema)
 }
 
 func TestPropertyFixtures(t *testing.T) {
@@ -135,16 +117,10 @@ func TestAdditionalPropertiesWithObject(t *testing.T) {
 	schema := new(spec.Schema)
 	b, err := YAMLDoc("../fixtures/yaml/models/modelWithObjectMap.yaml")
 	require.NoError(t, err)
-	var expected map[string]any
-	require.NoError(t, json.Unmarshal(b, &expected))
+
 	require.NoError(t, json.Unmarshal(b, schema))
 
-	cb, err := json.MarshalIndent(schema, "", "  ")
-	require.NoError(t, err)
-
-	var actual map[string]any
-	require.NoError(t, json.Unmarshal(cb, &actual))
-	assert.Equal(t, expected, actual)
+	assert.JSONMarshalAsT(t, b, schema)
 }
 
 func TestModelFixtures(t *testing.T) {

@@ -63,7 +63,7 @@ func TestOptionsLoaderFromOptions(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, b)
 
-	require.Equal(t, 2, called)
+	require.EqualT(t, 2, called)
 }
 
 func TestOptionsWithDocLoaderMatches(t *testing.T) {

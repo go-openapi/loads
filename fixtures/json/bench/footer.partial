@@ -1,0 +1,119 @@
+
+  },
+  "definitions": {
+    "Category": {
+      "id": "Category",
+      "properties": {
+        "id": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Pet": {
+      "id": "Pet",
+      "properties": {
+        "category": {
+          "$ref": "#/definitions/Category"
+        },
+        "id": {
+          "description": "unique identifier for the pet",
+          "format": "int64",
+          "maximum": 100.0,
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "photoUrls": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "status": {
+          "description": "pet status in the store",
+          "enum": [
+            "available",
+            "pending",
+            "sold"
+          ],
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "$ref": "#/definitions/Tag"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "newPet": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Pet"
+        },
+        {
+          "required": [
+            "name"
+          ]
+        }
+      ]
+    },
+    "Tag": {
+      "id": "Tag",
+      "properties": {
+        "id": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Error": {
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "consumes": [
+    "application/json",
+    "application/xml"
+  ],
+  "produces": [
+    "application/json",
+    "application/xml",
+    "text/plain",
+    "text/html"
+  ],
+  "securityDefinitions": {
+    "basic": {
+      "type": "basic"
+    },
+    "apiKey": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-API-KEY"
+    }
+  }
+}

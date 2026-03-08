@@ -5,6 +5,7 @@ package loads_test
 
 import (
 	"embed"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,6 +20,56 @@ import (
 
 //go:embed fixtures
 var embeddedFixtures embed.FS
+
+// Example with default loaders defined at the package level.
+func ExampleSpec_file() {
+	path := "fixtures/yaml/swagger/spec.yml"
+	doc, err := loads.Spec(path)
+	if err != nil {
+		fmt.Println("Could not load this spec")
+		return
+	}
+
+	fmt.Printf("Spec loaded: %q\n", doc.Host())
+
+	// Output: Spec loaded: "api.example.com"
+}
+
+// Example with custom loaders passed as options.
+func ExampleLoaderOption() {
+	path := "fixtures/yaml/swagger/spec.yml"
+
+	// a simpler version of loads.JSONDoc
+	jsonLoader := loads.NewDocLoaderWithMatch(
+		func(pth string, _ ...loading.Option) (json.RawMessage, error) {
+			buf, err := os.ReadFile(pth)
+			return json.RawMessage(buf), err
+		},
+		func(pth string) bool {
+			return filepath.Ext(pth) == ".json"
+		},
+	)
+
+	// equivalent to the default loader at the package level, which does:
+	//
+	//   loads.AddLoader(loading.YAMLMatcher, loading.YAMLDoc)
+	yamlLoader := loads.NewDocLoaderWithMatch(
+		loading.YAMLDoc,
+		func(pth string) bool {
+			return filepath.Ext(pth) == ".yml"
+		},
+	)
+
+	doc, err := loads.Spec(path, loads.WithDocLoaderMatches(jsonLoader, yamlLoader))
+	if err != nil {
+		fmt.Println("Could not load this spec")
+		return
+	}
+
+	fmt.Printf("Spec loaded: %q\n", doc.Host())
+
+	// Output: Spec loaded: "api.example.com"
+}
 
 // Loads a JSON document from http, with a custom header.
 func ExampleJSONSpec_http_custom_header() {
