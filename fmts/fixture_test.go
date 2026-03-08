@@ -5,8 +5,10 @@ package fmts
 
 import (
 	"encoding/json"
+	"iter"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -39,27 +41,39 @@ func assertSpecJSON(t *testing.T, specJSON []byte) bool {
 func assertSpecMaps(t *testing.T, actual, expected map[string]any) bool {
 	t.Helper()
 
-	res := true
 	if id, ok := expected["id"]; ok {
-		res = assert.Equal(t, id, actual["id"])
+		if !assert.Equal(t, id, actual["id"]) {
+			return false
+		}
 	}
-	res = res && assert.Equal(t, expected["consumes"], actual["consumes"])
-	res = res && assert.Equal(t, expected["produces"], actual["produces"])
-	res = res && assert.Equal(t, expected["schemes"], actual["schemes"])
-	res = res && assert.Equal(t, expected["swagger"], actual["swagger"])
-	res = res && assert.Equal(t, expected["info"], actual["info"])
-	res = res && assert.Equal(t, expected["host"], actual["host"])
-	res = res && assert.Equal(t, expected["basePath"], actual["basePath"])
-	res = res && assert.Equal(t, expected["paths"], actual["paths"])
-	res = res && assert.Equal(t, expected["definitions"], actual["definitions"])
-	res = res && assert.Equal(t, expected["responses"], actual["responses"])
-	res = res && assert.Equal(t, expected["securityDefinitions"], actual["securityDefinitions"])
-	res = res && assert.Equal(t, expected["tags"], actual["tags"])
-	res = res && assert.Equal(t, expected["externalDocs"], actual["externalDocs"])
-	res = res && assert.Equal(t, expected["x-some-extension"], actual["x-some-extension"])
-	res = res && assert.Equal(t, expected["x-schemes"], actual["x-schemes"])
 
-	return res
+	for key := range assertedKeys() {
+		if !assert.Equal(t, expected[key], actual[key]) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func assertedKeys() iter.Seq[string] {
+	return slices.Values([]string{
+		"consumes",
+		"produces",
+		"schemes",
+		"swagger",
+		"info",
+		"host",
+		"basePath",
+		"paths",
+		"definitions",
+		"responses",
+		"securityDefinitions",
+		"tags",
+		"externalDocs",
+		"x-some-extension",
+		"x-schemes",
+	})
 }
 
 //nolint:unparam
@@ -69,6 +83,7 @@ func roundTripTest(t *testing.T, fixtureType, extension, fileName string, schema
 	if extension == "yaml" {
 		return roundTripTestYAML(t, fixtureType, fileName, schema)
 	}
+
 	return roundTripTestJSON(t, fixtureType, fileName, schema)
 }
 
