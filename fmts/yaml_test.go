@@ -78,16 +78,17 @@ name: a string value
 	})
 
 	t.Run("YAML nodes as JSON", func(t *testing.T) {
+		const taggedString = "!!str"
 		var data yaml.Node
 		require.NoError(t, yaml.Unmarshal([]byte(sd), &data))
 
 		data.Content[0].Content = append(data.Content[0].Content,
-			&yaml.Node{Kind: yaml.ScalarNode, Value: "tag", Tag: "!!str"},
+			&yaml.Node{Kind: yaml.ScalarNode, Value: "tag", Tag: taggedString},
 			&yaml.Node{
 				Kind: yaml.MappingNode,
 				Content: []*yaml.Node{
-					{Kind: yaml.ScalarNode, Value: "name", Tag: "!!str"},
-					{Kind: yaml.ScalarNode, Value: "tag name", Tag: "!!str"},
+					{Kind: yaml.ScalarNode, Value: "name", Tag: taggedString},
+					{Kind: yaml.ScalarNode, Value: "tag name", Tag: taggedString},
 				},
 			},
 		)
