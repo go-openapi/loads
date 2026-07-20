@@ -1,8 +1,8 @@
 module github.com/go-openapi/loads
 
 require (
-	github.com/go-openapi/analysis v0.25.3
-	github.com/go-openapi/spec v0.22.7
+	github.com/go-openapi/analysis v0.25.4
+	github.com/go-openapi/spec v0.22.8
 	github.com/go-openapi/swag/loading v0.27.3
 	github.com/go-openapi/swag/yamlutils v0.27.3
 	github.com/go-openapi/testify/enable/yaml/v2 v2.6.0
@@ -14,18 +14,18 @@ require (
 	github.com/go-openapi/errors v0.22.8 // indirect
 	github.com/go-openapi/jsonpointer v1.0.0 // indirect
 	github.com/go-openapi/jsonreference v1.0.0 // indirect
-	github.com/go-openapi/strfmt v0.26.3 // indirect
+	github.com/go-openapi/strfmt v0.27.0 // indirect
 	github.com/go-openapi/swag/conv v0.27.3 // indirect
 	github.com/go-openapi/swag/jsonutils v0.27.3 // indirect
-	github.com/go-openapi/swag/mangling v0.26.1 // indirect
+	github.com/go-openapi/swag/mangling v0.27.3 // indirect
 	github.com/go-openapi/swag/pools v0.27.3 // indirect
 	github.com/go-openapi/swag/stringutils v0.27.3 // indirect
 	github.com/go-openapi/swag/typeutils v0.27.3 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/oklog/ulid/v2 v2.1.1 // indirect
-	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/text v0.38.0 // indirect
+	golang.org/x/net v0.57.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
 )
 
 go 1.25.0
