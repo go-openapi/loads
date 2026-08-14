@@ -1,7 +1,7 @@
 module github.com/go-openapi/loads
 
 require (
-	github.com/go-openapi/analysis v0.25.5
+	github.com/go-openapi/analysis v0.26.0
 	github.com/go-openapi/spec v0.22.9
 	github.com/go-openapi/swag/loading v0.28.0
 	github.com/go-openapi/swag/yamlutils v0.28.0
@@ -17,7 +17,7 @@ require (
 	github.com/go-openapi/strfmt v0.27.0 // indirect
 	github.com/go-openapi/swag/conv v0.28.0 // indirect
 	github.com/go-openapi/swag/jsonutils v0.28.0 // indirect
-	github.com/go-openapi/swag/mangling v0.27.3 // indirect
+	github.com/go-openapi/swag/mangling v0.28.0 // indirect
 	github.com/go-openapi/swag/pools v0.28.0 // indirect
 	github.com/go-openapi/swag/stringutils v0.27.3 // indirect
 	github.com/go-openapi/swag/typeutils v0.28.0 // indirect
