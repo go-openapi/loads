@@ -6,6 +6,8 @@ package loads
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -99,6 +101,30 @@ func TestLoaderChain(t *testing.T) {
 		require.ErrorIs(t, err, ErrLoads)
 		require.ErrorIs(t, err, errBoom)
 	})
+
+	t.Run("should report ErrLoads only once", func(t *testing.T) {
+		// a loader that already marked its error should not have the sentinel added again
+		chain := LoaderChain(NewDocLoaderWithMatch(func(string, ...loading.Option) (json.RawMessage, error) {
+			return nil, fmt.Errorf("%w: %w", ErrLoads, errBoom)
+		}, nil))
+
+		_, err := chain("x.json")
+		require.ErrorIs(t, err, ErrLoads)
+		require.ErrorIs(t, err, errBoom)
+		require.Equal(t, 1, strings.Count(err.Error(), ErrLoads.Error()))
+	})
+}
+
+func TestSpecNotFound(t *testing.T) {
+	// the sentinel is reported once, on a single line, with the cause of the failure
+	_, err := Spec(filepath.Join(t.TempDir(), "nowhere.json"))
+	require.Error(t, err)
+	require.ErrorIs(t, err, ErrLoads)
+	require.ErrorIs(t, err, fs.ErrNotExist)
+
+	message := err.Error()
+	require.Equal(t, 1, strings.Count(message, ErrLoads.Error()))
+	require.Equal(t, 0, strings.Count(message, "\n"))
 }
 
 func TestLoaderWithOptions(t *testing.T) {
