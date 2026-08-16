@@ -34,7 +34,7 @@ func TestSetLoaders(t *testing.T) {
 		var called bool
 		loads.SetLoaders(loads.NewDocLoaderWithMatch(customLoader(&called), nil)) // nil matcher: catch-all
 
-		doc, err := loads.Spec("fixtures/json/petstore-basic.json")
+		doc, err := loads.Spec("testdata/json/petstore-basic.json")
 		require.NoError(t, err)
 		assert.True(t, called, "the custom loader should be used")
 		assert.Equal(t, "petstore.swagger.wordnik.com", doc.Host())
@@ -46,7 +46,7 @@ func TestSetLoaders(t *testing.T) {
 		var called bool
 		loads.SetLoaders(loads.NewDocLoaderWithMatch(customLoader(&called), nil))
 
-		_, err := spec.PathLoader("fixtures/json/petstore-basic.json")
+		_, err := spec.PathLoader("testdata/json/petstore-basic.json")
 		require.NoError(t, err)
 		assert.True(t, called, "spec.PathLoader should use the new chain")
 	})
@@ -54,7 +54,7 @@ func TestSetLoaders(t *testing.T) {
 	t.Run("should restore the built-in default when called with no usable loader", func(t *testing.T) {
 		loads.SetLoaders() // reset
 
-		doc, err := loads.Spec("fixtures/yaml/swagger/spec.yml")
+		doc, err := loads.Spec("testdata/yaml/swagger/spec.yml")
 		require.NoError(t, err)
 		assert.Equal(t, "api.example.com", doc.Host())
 	})
@@ -63,7 +63,7 @@ func TestSetLoaders(t *testing.T) {
 func TestSetRestrictedLoaders(t *testing.T) {
 	t.Cleanup(func() { loads.SetLoaders() }) // restore the built-in default
 
-	loads.SetRestrictedLoaders("fixtures/yaml")
+	loads.SetRestrictedLoaders("testdata/yaml")
 
 	t.Run("should load a spec within the root via the package default", func(t *testing.T) {
 		doc, err := loads.Spec("swagger/spec.yml")

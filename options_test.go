@@ -15,7 +15,7 @@ import (
 	"github.com/go-openapi/testify/v2/require"
 )
 
-const optionFixture = "fixtures/json/resources/pathLoaderIssue.json"
+const optionFixture = "testdata/json/resources/pathLoaderIssue.json"
 
 var errTest = errors.New("test")
 

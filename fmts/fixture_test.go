@@ -117,7 +117,7 @@ func roundTripTestYAML(t *testing.T, fixtureType, fileName string, schema any) b
 
 func TestPropertyFixtures(t *testing.T) {
 	for _, extension := range extensions {
-		path := filepath.Join("..", "fixtures", extension, "models", "properties")
+		path := filepath.Join("..", "testdata", extension, "models", "properties")
 		files, err := os.ReadDir(path)
 		if err != nil {
 			t.Fatal(err)
@@ -130,7 +130,7 @@ func TestPropertyFixtures(t *testing.T) {
 
 func TestAdditionalPropertiesWithObject(t *testing.T) {
 	schema := new(spec.Schema)
-	b, err := YAMLDoc("../fixtures/yaml/models/modelWithObjectMap.yaml")
+	b, err := YAMLDoc("../testdata/yaml/models/modelWithObjectMap.yaml")
 	require.NoError(t, err)
 
 	require.NoError(t, json.Unmarshal(b, schema))
@@ -139,7 +139,7 @@ func TestAdditionalPropertiesWithObject(t *testing.T) {
 }
 
 func TestModelFixtures(t *testing.T) {
-	path := filepath.Join("..", "fixtures", "json", "models")
+	path := filepath.Join("..", "testdata", "json", "models")
 	files, err := os.ReadDir(path)
 	require.NoError(t, err)
 	specs := []string{"modelWithObjectMap", "models", "modelWithComposition", "modelWithExamples", "multipleModels"}
@@ -156,7 +156,7 @@ FILES:
 		}
 		roundTripTest(t, "model", "json", filepath.Join(path, f.Name()), &spec.Schema{})
 	}
-	path = filepath.Join("..", "fixtures", "yaml", "models")
+	path = filepath.Join("..", "testdata", "yaml", "models")
 	files, err = os.ReadDir(path)
 	require.NoError(t, err)
 
@@ -176,7 +176,7 @@ YAMLFILES:
 }
 
 func TestParameterFixtures(t *testing.T) {
-	path := filepath.Join("..", "fixtures", "json", "resources", "parameters")
+	path := filepath.Join("..", "testdata", "json", "resources", "parameters")
 	files, err := os.ReadDir(path)
 	require.NoError(t, err)
 
@@ -186,7 +186,7 @@ func TestParameterFixtures(t *testing.T) {
 }
 
 func TestOperationFixtures(t *testing.T) {
-	path := filepath.Join("..", "fixtures", "json", "resources", "operations")
+	path := filepath.Join("..", "testdata", "json", "resources", "operations")
 	files, err := os.ReadDir(path)
 	require.NoError(t, err)
 
@@ -196,7 +196,7 @@ func TestOperationFixtures(t *testing.T) {
 }
 
 func TestResponseFixtures(t *testing.T) {
-	path := filepath.Join("..", "fixtures", "json", "responses")
+	path := filepath.Join("..", "testdata", "json", "responses")
 	files, err := os.ReadDir(path)
 	require.NoError(t, err)
 
@@ -210,7 +210,7 @@ func TestResponseFixtures(t *testing.T) {
 }
 
 func TestResourcesFixtures(t *testing.T) {
-	path := filepath.Join("..", "fixtures", "json", "resources")
+	path := filepath.Join("..", "testdata", "json", "resources")
 	files, err := os.ReadDir(path)
 	require.NoError(t, err)
 

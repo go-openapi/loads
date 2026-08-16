@@ -7,13 +7,13 @@ import (
 	"testing"
 )
 
-//go:embed fixtures/json/bench/header.partial
+//go:embed testdata/json/bench/header.partial
 var benchHeader []byte
 
-//go:embed fixtures/json/bench/path-item.partial
+//go:embed testdata/json/bench/path-item.partial
 var benchPathItem []byte
 
-//go:embed fixtures/json/bench/footer.partial
+//go:embed testdata/json/bench/footer.partial
 var benchFooter []byte
 
 func BenchmarkAnalyzed(b *testing.B) {

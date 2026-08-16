@@ -73,7 +73,7 @@ func ExampleSpec_restrictNetwork() {
 // Use this when the convenient, opinionated defaults fit; reach for the manual options shown
 // in the other examples when you need a custom policy.
 func ExampleSpecRestricted() {
-	const root = "fixtures/yaml"
+	const root = "testdata/yaml"
 
 	// A document inside the trusted root loads normally.
 	doc, err := loads.SpecRestricted("swagger/spec.yml", root)
@@ -106,7 +106,7 @@ func ExampleSpecRestricted() {
 // spec.PathLoader — is confined, with no unconfined fallback left behind. Prefer this to
 // AddLoader, which only prepends and leaves the unconfined default reachable.
 func ExampleSetRestrictedLoaders() {
-	loads.SetRestrictedLoaders("fixtures/yaml")
+	loads.SetRestrictedLoaders("testdata/yaml")
 	defer loads.SetLoaders() // restore the built-in default
 
 	doc, err := loads.Spec("swagger/spec.yml")
@@ -131,7 +131,7 @@ func ExampleSetRestrictedLoaders() {
 // ".." traversal, or a symlink pointing outside. Passing it through [loads.WithLoadingOptions]
 // makes the confinement apply to reference resolution as well.
 func ExampleSpec_restrictFilesystem() {
-	const root = "fixtures/yaml"
+	const root = "testdata/yaml"
 
 	// A document inside the trusted root loads normally.
 	doc, err := loads.Spec("swagger/spec.yml", loads.WithLoadingOptions(loading.WithRoot(root)))

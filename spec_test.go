@@ -15,16 +15,16 @@ import (
 	"github.com/go-openapi/testify/v2/require"
 )
 
-//go:embed fixtures/json/petstore-basic.json
+//go:embed testdata/json/petstore-basic.json
 var petStoreJSON []byte
 
-//go:embed fixtures/yaml/search.yaml
+//go:embed testdata/yaml/search.yaml
 var yamlSpec []byte
 
-//go:embed fixtures/json/expected-expanded.json
+//go:embed testdata/json/expected-expanded.json
 var expectedExpanded []byte
 
-//go:embed fixtures/json/cascade-ref-expanded.json
+//go:embed testdata/json/cascade-ref-expanded.json
 var cascadeRefExpanded []byte
 
 func TestUnknownSpecVersion(t *testing.T) {
@@ -52,7 +52,7 @@ func TestLoadsYAMLContent(t *testing.T) {
 
 // for issue #11.
 func TestRegressionExpand(t *testing.T) {
-	swaggerFile := "fixtures/yaml/swagger/1/2/3/4/swagger.yaml"
+	swaggerFile := "testdata/yaml/swagger/1/2/3/4/swagger.yaml"
 	document, err := Spec(swaggerFile)
 	require.NoError(t, err)
 	require.NotNil(t, document)
@@ -65,7 +65,7 @@ func TestRegressionExpand(t *testing.T) {
 }
 
 func TestCascadingRefExpand(t *testing.T) {
-	swaggerFile := "fixtures/yaml/swagger/spec.yml"
+	swaggerFile := "testdata/yaml/swagger/spec.yml"
 	document, err := Spec(swaggerFile)
 	require.NoError(t, err)
 	require.NotNil(t, document)
@@ -85,7 +85,7 @@ func TestFailsInvalidJSON(t *testing.T) {
 
 // issue go-swagger/go-swagger#1816 (regression when cloning original spec).
 func TestIssue1846(t *testing.T) {
-	swaggerFile := "fixtures/bugs/1816/fixture-1816.yaml"
+	swaggerFile := "testdata/bugs/1816/fixture-1816.yaml"
 	document, err := Spec(swaggerFile)
 	require.NoError(t, err)
 	require.NotNil(t, document)
@@ -108,7 +108,7 @@ func TestIssue1846(t *testing.T) {
 }
 
 func TestEmbedded(t *testing.T) {
-	swaggerFile := "fixtures/yaml/swagger/spec.yml"
+	swaggerFile := "testdata/yaml/swagger/spec.yml"
 	document, err := Spec(swaggerFile)
 	require.NoError(t, err)
 	require.NotNil(t, document)
@@ -148,7 +148,7 @@ func TestDocument(t *testing.T) {
 }
 
 func TestSpecCircular(t *testing.T) {
-	swaggerFile := "fixtures/json/resources/pathLoaderIssue.json"
+	swaggerFile := "testdata/json/resources/pathLoaderIssue.json"
 	document, err := Spec(swaggerFile)
 	require.NoError(t, err)
 	require.NotNil(t, document)
@@ -156,7 +156,7 @@ func TestSpecCircular(t *testing.T) {
 
 func TestIssueSpec145(t *testing.T) {
 	t.Run("with remote $ref", func(t *testing.T) {
-		docPath := filepath.Join("fixtures", "bugs", "145", "Program Files (x86)", "AppName", "todos.json")
+		docPath := filepath.Join("testdata", "bugs", "145", "Program Files (x86)", "AppName", "todos.json")
 
 		t.Run("with Spec loader", func(t *testing.T) {
 			document, err := Spec(docPath)
@@ -178,7 +178,7 @@ func TestIssueSpec145(t *testing.T) {
 	})
 
 	t.Run("with self-contained root", func(t *testing.T) {
-		docPath := filepath.Join("fixtures", "bugs", "145", "Program Files (x86)", "AppName", "todos-expanded.json")
+		docPath := filepath.Join("testdata", "bugs", "145", "Program Files (x86)", "AppName", "todos-expanded.json")
 
 		t.Run("with Spec loader", func(t *testing.T) {
 			document, err := Spec(docPath)
