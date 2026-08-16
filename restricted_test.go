@@ -59,7 +59,7 @@ func TestRestrictedHTTPClient(t *testing.T) {
 }
 
 func TestSpecRestricted(t *testing.T) {
-	const root = "fixtures/yaml"
+	const root = "testdata/yaml"
 
 	t.Run("should load a YAML spec within the root", func(t *testing.T) {
 		doc, err := loads.SpecRestricted("swagger/spec.yml", root)
@@ -88,7 +88,7 @@ func TestSpecRestricted(t *testing.T) {
 }
 
 func TestJSONSpecRestricted(t *testing.T) {
-	const root = "fixtures/json"
+	const root = "testdata/json"
 
 	t.Run("should load a JSON spec within the root", func(t *testing.T) {
 		doc, err := loads.JSONSpecRestricted("petstore-basic.json", root)
@@ -112,7 +112,7 @@ func TestJSONSpecRestricted(t *testing.T) {
 }
 
 func TestJSONDocRestricted(t *testing.T) {
-	const root = "fixtures/json"
+	const root = "testdata/json"
 
 	t.Run("should load within the root", func(t *testing.T) {
 		ldr := loads.JSONDocRestricted(root)
@@ -142,7 +142,7 @@ func TestJSONDocRestricted(t *testing.T) {
 		// document still loads from the registered root.
 		doc, err := loads.Spec("petstore-basic.json",
 			loads.WithDocLoader(loads.JSONDocRestricted(root)),
-			loads.WithLoadingOptions(loading.WithRoot("fixtures/yaml")),
+			loads.WithLoadingOptions(loading.WithRoot("testdata/yaml")),
 		)
 		require.NoError(t, err)
 		assert.Equal(t, "petstore.swagger.wordnik.com", doc.Host())

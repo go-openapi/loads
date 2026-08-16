@@ -18,12 +18,12 @@ import (
 	"github.com/go-openapi/swag/loading"
 )
 
-//go:embed fixtures
+//go:embed testdata
 var embeddedFixtures embed.FS
 
 // Example with default loaders defined at the package level.
 func ExampleSpec_file() {
-	path := "fixtures/yaml/swagger/spec.yml"
+	path := "testdata/yaml/swagger/spec.yml"
 	doc, err := loads.Spec(path)
 	if err != nil {
 		fmt.Println("Could not load this spec")
@@ -37,7 +37,7 @@ func ExampleSpec_file() {
 
 // Example with custom loaders passed as options.
 func ExampleLoaderOption() {
-	path := "fixtures/yaml/swagger/spec.yml"
+	path := "testdata/yaml/swagger/spec.yml"
 
 	// a simpler version of loads.JSONDoc
 	jsonLoader := loads.NewDocLoaderWithMatch(
@@ -143,7 +143,7 @@ func ExampleSpec_http_json() {
 func ExampleSpec_embedded_yaml() {
 	// loads a YAML spec from a file on an embedded file system
 	doc, err := loads.Spec(
-		path.Join("fixtures", "yaml", "swagger", "spec.yml"), // [embed.FS] sep is "/" even on windows
+		path.Join("testdata", "yaml", "swagger", "spec.yml"), // [embed.FS] sep is "/" even on windows
 		loads.WithLoadingOptions(
 			loading.WithFS(embeddedFixtures),
 		))
@@ -165,7 +165,7 @@ func ExampleSpec_embedded_yaml() {
 }
 
 func serveSomeYAMLDocument() *httptest.Server {
-	source, err := os.Open(filepath.Join("fixtures", "yaml", "swagger", "spec.yml"))
+	source, err := os.Open(filepath.Join("testdata", "yaml", "swagger", "spec.yml"))
 	if err != nil {
 		panic(err)
 	}
@@ -177,7 +177,7 @@ func serveSomeYAMLDocument() *httptest.Server {
 }
 
 func serveSomeJSONDocument() *httptest.Server {
-	source, err := os.Open(filepath.Join("fixtures", "json", "resources", "pathLoaderIssue.json"))
+	source, err := os.Open(filepath.Join("testdata", "json", "resources", "pathLoaderIssue.json"))
 	if err != nil {
 		panic(err)
 	}

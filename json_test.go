@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/testify/v2/require"
 )
 
-//go:embed fixtures/json/petstore.json
+//go:embed testdata/json/petstore.json
 var petstoreJSON []byte
 
 func TestLoadJSON(t *testing.T) {
