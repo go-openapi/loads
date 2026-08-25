@@ -1,0 +1,82 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "every optional number a swagger document may hold, set to zero",
+    "version": "1.0.0"
+  },
+  "basePath": "/",
+  "paths": {
+    "/things": {
+      "get": {
+        "operationId": "listThings",
+        "parameters": [
+          {
+            "name": "count",
+            "in": "query",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 0,
+            "multipleOf": 0
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 0,
+              "minLength": 0
+            },
+            "maxItems": 0,
+            "minItems": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/thing"
+            },
+            "headers": {
+              "X-Rate": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "thing": {
+      "type": "object",
+      "maxProperties": 0,
+      "minProperties": 0,
+      "properties": {
+        "size": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 0,
+          "multipleOf": 0
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 0,
+          "minLength": 0
+        },
+        "parts": {
+          "type": "array",
+          "maxItems": 0,
+          "minItems": 0,
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 0
+          }
+        }
+      }
+    }
+  }
+}
