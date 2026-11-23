@@ -1,7 +1,7 @@
 module github.com/go-openapi/loads
 
 require (
-	github.com/go-openapi/analysis v1.0.1
+	github.com/go-openapi/analysis v1.0.2
 	github.com/go-openapi/spec v1.0.1
 	github.com/go-openapi/swag/jsonutils v0.29.2
 	github.com/go-openapi/swag/loading v0.29.2
@@ -12,10 +12,10 @@ require (
 )
 
 require (
-	github.com/go-openapi/errors v0.22.8 // indirect
+	github.com/go-openapi/errors v0.22.9 // indirect
 	github.com/go-openapi/jsonpointer v1.0.2 // indirect
 	github.com/go-openapi/jsonreference v1.0.2 // indirect
-	github.com/go-openapi/strfmt v0.27.2 // indirect
+	github.com/go-openapi/strfmt v0.27.4 // indirect
 	github.com/go-openapi/swag/conv v0.29.2 // indirect
 	github.com/go-openapi/swag/mangling v0.29.2 // indirect
 	github.com/go-openapi/swag/pools v0.29.2 // indirect
